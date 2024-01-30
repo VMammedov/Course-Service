@@ -1,0 +1,32 @@
+version: '3'
+services:
+  database:
+    hostname: course_db_mysql
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_USER: course_admin
+      MYSQL_PASSWORD: course_1517
+      MYSQL_ROOT_PASSWORD: course_root_1517
+      MYSQL_DATABASE: COURSE_SERVICE_DB
+    ports:
+      - '3306:3306'
+    volumes:
+      - dbCourse:/var/lib/mysql
+    networks:
+      - course_network
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "9090:8080"
+    depends_on:
+      - database
+    networks:
+      - course_network
+
+volumes:
+  dbCourse:
+
+networks:
+  course_network:

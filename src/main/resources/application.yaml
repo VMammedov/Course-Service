@@ -1,0 +1,32 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api/
+
+spring:
+  output:
+    ansi:
+      enabled: always # Showing output understandable (colored)
+
+  datasource:
+    url: jdbc:mysql://${DB_CONNECTION_URL:localhost}:${DB_CONNECTION_PORT:3306}/${DB_NAME:COURSE_SERVICE_DB}
+    username: course_admin
+    password: course_1517
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    show-sql: true
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
+
+logging:
+  level:
+    liquibase: INFO
+
+token:
+  signing:
+    key: aXRfaXNfbXlfc2VjcmV0X2tleV9pdF9pc19teV9zZWNyZXRfa2V5X2l0X2lzX215X3NlY3JldF9rZXlfaXRfaXNfbXlfc2VjcmV0X2tleV8=
