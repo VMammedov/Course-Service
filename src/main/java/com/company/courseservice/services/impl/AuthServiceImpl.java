@@ -1,7 +1,6 @@
 package com.company.courseservice.services.impl;
 
 import com.company.courseservice.domain.User;
-import com.company.courseservice.domain.UserAuthority;
 import com.company.courseservice.repository.UserAuthorityRepository;
 import com.company.courseservice.repository.UserRepository;
 import com.company.courseservice.request.SignUpRequest;

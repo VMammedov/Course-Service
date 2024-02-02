@@ -1,73 +1,158 @@
 databaseChangeLog:
   - changeSet:
-       id: 1
-       author: vusalm
-       changes:
+      id: 1
+      author: vusalm
+      changes:
          - createTable:
-              tableName: users
-              columns:
-                - column:
-                   name: id
-                   type: BIGINT
-                   autoIncrement: true
-                   constraints:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
                     primaryKey: true
                     nullable: false
-                - column:
-                   name: username
-                   type: VARCHAR(255)
-                   constraints:
+              - column:
+                  name: username
+                  type: VARCHAR(255)
+                  constraints:
                     nullable: false
-                - column:
-                    name: email
-                    type: VARCHAR(255)
-                    constraints:
-                      nullable: false
-                - column:
-                   name: password
-                   type: TEXT
-                   constraints:
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+                  constraints:
                     nullable: false
-                - column:
-                   name: age
-                   type: INTEGER
-                - column:
-                    name: description
-                    type: TEXT
-                - column:
-                   name: account_non_expired
-                   type: BOOLEAN
-                - column:
-                   name: account_non_locked
-                   type: BOOLEAN
-                - column:
-                   name: credentials_non_expired
-                   type: BOOLEAN
-                - column:
-                   name: enabled
-                   type: BOOLEAN
-                - column:
-                   name: created_date
-                   type: DATETIME
+              - column:
+                  name: password
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: age
+                  type: INTEGER
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: account_non_expired
+                  type: BOOLEAN
+              - column:
+                  name: account_non_locked
+                  type: BOOLEAN
+              - column:
+                  name: credentials_non_expired
+                  type: BOOLEAN
+              - column:
+                  name: enabled
+                  type: BOOLEAN
+              - column:
+                  name: created_date
+                  type: DATETIME
          - createTable:
-             tableName: authorities
-             columns:
-               - column:
-                   name: id
-                   type: BIGINT
-                   autoIncrement: true
-                   constraints:
-                     primaryKey: true
-                     nullable: false
-               - column:
-                   name: authority
-                   type: TEXT
+            tableName: authorities
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: authority
+                  type: TEXT
          - createTable:
-             tableName: users_authorities
-             columns:
-               - column:
-                   name: user_id
-                   type: BIGINT
-               - column:
-                   name: authority_id
-                   type: BIGINT
+            tableName: users_authorities
+            columns:
+              - column:
+                  name: user_id
+                  type: BIGINT
+              - column:
+                  name: authority_id
+                  type: BIGINT
+  - changeSet:
+      id: 2
+      author: vusalm
+      changes:
+        - createTable:
+            tableName: categories
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(300)
+        - createTable:
+            tableName: sub_categories
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(300)
+              - column:
+                  name: category_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_sub_categories_categories
+                    references: categories(id)
+        - createTable:
+            tableName: courses
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: TEXT
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: price
+                  type: DOUBLE
+              - column:
+                  name: created_date
+                  type: DATETIME
+              - column:
+                  name: last_updated_date
+                  type: DATETIME
+              - column:
+                  name: duration_by_second
+                  type: INT
+              - column:
+                  name: have_certificate
+                  type: BOOLEAN
+              - column:
+                  name: enabled
+                  type: BOOLEAN
+              - column:
+                  name: rating
+                  type: TINYINT
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_courses_users
+                    references: users(id)
+              - column:
+                  name: sub_category_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_courses_sub_categories
+                    references: sub_categories(id)
