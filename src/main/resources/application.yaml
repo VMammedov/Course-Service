@@ -3,6 +3,10 @@ server:
   servlet:
     context-path: /api/
 
+springdoc:
+  api-docs:
+    path: /api-docs
+
 spring:
   output:
     ansi:
@@ -10,8 +14,8 @@ spring:
 
   datasource:
     url: jdbc:mysql://${DB_CONNECTION_URL:localhost}:${DB_CONNECTION_PORT:3306}/${DB_NAME:COURSE_SERVICE_DB}
-    username: course_admin
-    password: course_1517
+    username: ${DB_USERNAME:course_admin}
+    password: ${DB_USER_PASSWORD:course_1517}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
