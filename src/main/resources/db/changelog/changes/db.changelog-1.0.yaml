@@ -156,3 +156,82 @@ databaseChangeLog:
                   constraints:
                     foreignKeyName: fk_courses_sub_categories
                     references: sub_categories(id)
+  - changeSet:
+      id: 3
+      author: vusalm
+      changes:
+        - createTable:
+            tableName: sections
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(640)
+              - column:
+                  name: course_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_sections_courses
+                    references: courses(id)
+        - createTable:
+            tableName: reviews
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: content
+                  type: TEXT
+              - column:
+                  name: rate
+                  type: TINYINT
+              - column:
+                  name: course_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_reviews_courses
+                    references: courses(id)
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_reviews_users
+                    references: users(id)
+        - createTable:
+            tableName: lectures
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(640)
+              - column:
+                  name: url
+                  type: TEXT
+              - column:
+                  name: course_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_lectures_courses
+                    references: courses(id)
+              - column:
+                  name: section_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_lectures_sections
+                    references: sections(id)
