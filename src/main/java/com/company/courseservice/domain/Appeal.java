@@ -11,7 +11,7 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "appels")
+@Table(name = "appeals")
 public class Appeal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

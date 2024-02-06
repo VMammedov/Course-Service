@@ -15,18 +15,19 @@ import java.util.List;
 public class AppealController {
     private final AppealService appealService;
 
-    @PostMapping
+    @PostMapping("/sentAppeal")
     public ResponseEntity<Appeal> sentAppeal(@RequestBody SentMessageRequest request){
         return ResponseEntity.ok(appealService.sentAppeal(request));
     }
 
-    @GetMapping
+    @GetMapping("/getAllAppeals")
     public ResponseEntity<List<Appeal>> getAllAppeals(){
+
         return ResponseEntity.ok(appealService.getAllAppeals());
     }
 
-    @GetMapping("{email}")
-    public ResponseEntity<Appeal> getAppealByEmail(@PathVariable("email") String email){
+    @GetMapping("/getAppealByEmail")
+    public ResponseEntity<Appeal> getAppealByEmail(@RequestParam(name = "email") String email){
         return ResponseEntity.ok(appealService.getAppealByEmail(email));
     }
 
