@@ -1,11 +1,10 @@
 package com.company.courseservice.services.impl;
 
 import com.company.courseservice.domain.Appeal;
-import com.company.courseservice.domain.Category;
+import com.company.courseservice.exception.DataNotFoundException;
 import com.company.courseservice.repository.AppealRepository;
 import com.company.courseservice.request.Appeal.CreateAppealRequest;
 import com.company.courseservice.response.Appeal.AppealResponse;
-import com.company.courseservice.response.category.CategoryResponse;
 import com.company.courseservice.services.AppealService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -73,6 +72,10 @@ public class AppealServiceImpl implements AppealService {
     public List<AppealResponse> getAppealsByEmail(String email) {
         try{
             List<Appeal> appeals = appealRepository.findAllByEmail(email);
+            
+            if(appeals == null)
+              throw new DataNotFoundException("Appeal not found by email"));
+          
             List<AppealResponse> appealResponseList = new ArrayList<>();
 
             for(Appeal appeal : appeals)
@@ -84,8 +87,6 @@ public class AppealServiceImpl implements AppealService {
             return appealResponseList;
         } catch (Exception exception)
         {
-            // exception
             return null;
         }
-    }
 }
