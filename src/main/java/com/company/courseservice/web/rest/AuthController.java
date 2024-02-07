@@ -1,8 +1,8 @@
 package com.company.courseservice.web.rest;
 
-import com.company.courseservice.request.SignUpRequest;
-import com.company.courseservice.request.SignInRequest;
-import com.company.courseservice.response.AuthResponse;
+import com.company.courseservice.request.Auth.SignUpRequest;
+import com.company.courseservice.request.Auth.SignInRequest;
+import com.company.courseservice.response.Auth.AuthResponse;
 import com.company.courseservice.services.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

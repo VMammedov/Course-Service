@@ -20,5 +20,5 @@ public class Appeal {
     private String email;
     private String phoneNumber;
     private String message;
-    private Date sentDate = new Date();
+    private Date sentDate;
 }

@@ -1,8 +1,8 @@
 package com.company.courseservice.services;
 
-import com.company.courseservice.request.SignUpRequest;
-import com.company.courseservice.request.SignInRequest;
-import com.company.courseservice.response.AuthResponse;
+import com.company.courseservice.request.Auth.SignUpRequest;
+import com.company.courseservice.request.Auth.SignInRequest;
+import com.company.courseservice.response.Auth.AuthResponse;
 
 public interface AuthService {
     AuthResponse signUp(SignUpRequest request);

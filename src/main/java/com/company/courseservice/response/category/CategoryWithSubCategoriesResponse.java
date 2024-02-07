@@ -1,15 +1,20 @@
 package com.company.courseservice.response.category;
 
+import com.company.courseservice.dto.CategoryDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateCategoryResponse {
-    private Long id;
-    private String name;
+@ToString
+public class CategoryWithSubCategoriesResponse {
+    private Integer count;
+    private List<CategoryDto> data;
 }
