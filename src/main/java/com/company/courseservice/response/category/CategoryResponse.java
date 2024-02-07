@@ -1,4 +1,4 @@
-package com.company.courseservice.request;
+package com.company.courseservice.response.category;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SignInRequest {
-    private String email;
-    private String password;
+public class CategoryResponse {
+    private String name;
 }

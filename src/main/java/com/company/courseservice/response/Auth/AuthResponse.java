@@ -1,4 +1,4 @@
-package com.company.courseservice.response;
+package com.company.courseservice.response.Auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

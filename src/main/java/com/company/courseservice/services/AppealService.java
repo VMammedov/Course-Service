@@ -1,14 +1,15 @@
 package com.company.courseservice.services;
 
 import com.company.courseservice.domain.Appeal;
-import com.company.courseservice.request.SentMessageRequest;
+import com.company.courseservice.request.Appeal.CreateAppealRequest;
+import com.company.courseservice.response.Appeal.AppealResponse;
 
 import java.util.List;
 
 public interface AppealService {
-    Appeal sentAppeal(SentMessageRequest request);
+    AppealResponse sentAppeal(CreateAppealRequest request);
 
-    List<Appeal> getAllAppeals();
+    List<AppealResponse> getAllAppeals();
 
-    Appeal getAppealByEmail(String email);
+    List<AppealResponse> getAppealsByEmail(String email);
 }
