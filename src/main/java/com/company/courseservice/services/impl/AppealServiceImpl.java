@@ -1,6 +1,7 @@
 package com.company.courseservice.services.impl;
 
 import com.company.courseservice.domain.Appeal;
+import com.company.courseservice.exception.DataNotFoundException;
 import com.company.courseservice.repository.AppealRepository;
 import com.company.courseservice.request.SentMessageRequest;
 import com.company.courseservice.services.AppealService;
@@ -35,6 +36,6 @@ public class AppealServiceImpl implements AppealService {
     @Override
     public Appeal getAppealByEmail(String email) {
         return repository.findByEmail(email).orElseThrow(()->
-                new RuntimeException("Appeal not found by email"));
+                new DataNotFoundException("Appeal not found by email"));
     }
 }
