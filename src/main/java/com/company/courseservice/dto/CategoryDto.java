@@ -1,7 +1,6 @@
 package com.company.courseservice.dto;
 
 import com.company.courseservice.domain.SubCategory;
-import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,6 +18,5 @@ public class CategoryDto {
 
     private Integer count;
 
-    @OneToMany(mappedBy = "category")
     private List<SubCategory> subCategories;
 }
