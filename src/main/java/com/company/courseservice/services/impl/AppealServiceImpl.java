@@ -40,9 +40,7 @@ public class AppealServiceImpl implements AppealService {
             appealResponse = modelMapper.map(appeal, AppealResponse.class);
 
             return appealResponse;
-        }
-        catch (Exception exception)
-        {
+        } catch (Exception exception) {
             // throw exception
             return null;
         }
@@ -54,15 +52,13 @@ public class AppealServiceImpl implements AppealService {
             List<Appeal> appeals = appealRepository.findAll();
             List<AppealResponse> appealResponseList = new ArrayList<>();
 
-            for(Appeal appeal : appeals)
-            {
+            for (Appeal appeal : appeals) {
                 AppealResponse appealResponse = modelMapper.map(appeal, AppealResponse.class);
                 appealResponseList.add(appealResponse);
             }
 
             return appealResponseList;
-        } catch (Exception exception)
-        {
+        } catch (Exception exception) {
             // exception
             return null;
         }
@@ -70,23 +66,22 @@ public class AppealServiceImpl implements AppealService {
 
     @Override
     public List<AppealResponse> getAppealsByEmail(String email) {
-        try{
+        try {
             List<Appeal> appeals = appealRepository.findAllByEmail(email);
-            
-            if(appeals == null)
-              throw new DataNotFoundException("Appeal not found by email"));
-          
+
+            if (appeals == null)
+                throw new DataNotFoundException("Appeal not found by email");
+
             List<AppealResponse> appealResponseList = new ArrayList<>();
 
-            for(Appeal appeal : appeals)
-            {
+            for (Appeal appeal : appeals) {
                 AppealResponse appealResponse = modelMapper.map(appeal, AppealResponse.class);
                 appealResponseList.add(appealResponse);
             }
 
             return appealResponseList;
-        } catch (Exception exception)
-        {
+        } catch (Exception exception) {
             return null;
         }
+    }
 }
