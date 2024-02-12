@@ -1,4 +1,4 @@
-package com.company.courseservice.response.category;
+package com.company.courseservice.request.SubCategory;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoryResponse {
+public class CreateSubCategoryRequest {
     private String name;
+    private Long categoryId;
 }

@@ -1,6 +1,5 @@
 package com.company.courseservice.services;
 
-import com.company.courseservice.domain.Appeal;
 import com.company.courseservice.request.Appeal.CreateAppealRequest;
 import com.company.courseservice.response.Appeal.AppealResponse;
 
@@ -12,4 +11,5 @@ public interface AppealService {
     List<AppealResponse> getAllAppeals();
 
     List<AppealResponse> getAppealsByEmail(String email);
+    AppealResponse getAppeal(Long id);
 }

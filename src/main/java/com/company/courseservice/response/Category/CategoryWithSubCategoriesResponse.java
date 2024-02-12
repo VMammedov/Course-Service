@@ -1,4 +1,4 @@
-package com.company.courseservice.response.category;
+package com.company.courseservice.response.Category;
 
 import com.company.courseservice.dto.CategoryDto;
 import lombok.AllArgsConstructor;

@@ -32,5 +32,4 @@ logging:
     liquibase: INFO
 
 token:
-  signing:
-    key: aXRfaXNfbXlfc2VjcmV0X2tleV9pdF9pc19teV9zZWNyZXRfa2V5X2l0X2lzX215X3NlY3JldF9rZXlfaXRfaXNfbXlfc2VjcmV0X2tleV8=
+  key: aXRfaXNfbXlfc2VjcmV0X2tleV9pdF9pc19teV9zZWNyZXRfa2V5X2l0X2lzX215X3NlY3JldF9rZXlfaXRfaXNfbXlfc2VjcmV0X2tleV8=
