@@ -1,13 +1,14 @@
 package com.company.courseservice.services;
 
-import com.company.courseservice.request.course.CreateCourseRequest;
-import com.company.courseservice.request.course.UpdateCourseRequest;
-import com.company.courseservice.response.course.CourseResponse;
+import com.company.courseservice.request.Course.CreateCourseRequest;
+import com.company.courseservice.request.Course.UpdateCourseRequest;
+import com.company.courseservice.response.Course.CourseResponse;
+import com.company.courseservice.response.Course.CreateCourseResponse;
 
 import java.util.List;
 
 public interface CourseService {
-    CourseResponse createCourse(CreateCourseRequest request);
+    CreateCourseResponse createCourse(CreateCourseRequest request);
 
     List<CourseResponse> getAllCourse();
 
@@ -17,5 +18,5 @@ public interface CourseService {
 
     CourseResponse getCourseById(Long id);
 
-    CourseResponse getCourseByName(String name);
+    List<CourseResponse> getCoursesByName(String name);
 }

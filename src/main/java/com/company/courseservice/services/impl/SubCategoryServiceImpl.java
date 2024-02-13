@@ -30,7 +30,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     @Override
     public CreateSubCategoryResponse createSubCategory(CreateSubCategoryRequest request) {
         Category category = categoryRepository.findById(request.getCategoryId())
-                .orElseThrow(() -> new DataNotFoundException("Category with " + request.getCategoryId() + " id not found!"));
+                .orElseThrow(() -> new DataNotFoundException("SubCategory with " + request.getCategoryId() + " id not found!"));
 
         SubCategory subCategory = SubCategory.builder().name(request.getName()).category(category).build();
 
@@ -45,7 +45,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     @Override
     public SubCategoryResponse getSubCategory(Long id) {
         SubCategory subCategory = subCategoryRepository.findById(id)
-                .orElseThrow(() -> new DataNotFoundException("Category with " + id + " id not found!"));
+                .orElseThrow(() -> new DataNotFoundException("SubCategory with " + id + " id not found!"));
 
         return modelMapper.map(subCategory, SubCategoryResponse.class);
     }

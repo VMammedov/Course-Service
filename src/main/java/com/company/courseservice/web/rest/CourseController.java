@@ -1,8 +1,9 @@
 package com.company.courseservice.web.rest;
 
-import com.company.courseservice.request.course.CreateCourseRequest;
-import com.company.courseservice.request.course.UpdateCourseRequest;
-import com.company.courseservice.response.course.CourseResponse;
+import com.company.courseservice.request.Course.CreateCourseRequest;
+import com.company.courseservice.request.Course.UpdateCourseRequest;
+import com.company.courseservice.response.Course.CourseResponse;
+import com.company.courseservice.response.Course.CreateCourseResponse;
 import com.company.courseservice.services.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,7 @@ public class CourseController {
 
     @PostMapping("/createCourse")
     @ResponseStatus(HttpStatus.CREATED)
-    public CourseResponse createCourse(@RequestBody CreateCourseRequest request){
+    public CreateCourseResponse createCourse(@RequestBody CreateCourseRequest request){
         return service.createCourse(request);
     }
 
@@ -28,24 +29,24 @@ public class CourseController {
         return service.getAllCourse();
     }
 
-    @GetMapping("/getCourseById")
-    public CourseResponse getCourseById(@PathVariable("id") Long id){
+    @GetMapping("/getCourseById/{id}")
+    public CourseResponse getCourseById(@PathVariable Long id){
         return service.getCourseById(id);
     }
     @GetMapping("getCourseByName")
-    public CourseResponse getCourseByName(@RequestParam(name = "name") String name){
-        return service.getCourseByName(name);
+    public List<CourseResponse> getCourseByName(@RequestParam(name = "name") String name){
+        return service.getCoursesByName(name);
     }
 
     @PutMapping("/updateCourseById/{id}")
-    public CourseResponse updateCourseById(@PathVariable("id") Long id, @RequestBody UpdateCourseRequest request){
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public CourseResponse updateCourseById(@PathVariable Long id, @RequestBody UpdateCourseRequest request){
         return service.updateCourseById(id,request);
     }
 
     @DeleteMapping("/deleteCourseById/{id}")
-    public void deleteCourseById(@PathVariable("id") Long id){
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void deleteCourseById(@PathVariable Long id){
          service.deleteCourseById(id);
     }
-
-
 }
