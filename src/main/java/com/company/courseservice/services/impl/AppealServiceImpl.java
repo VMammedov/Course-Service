@@ -7,13 +7,17 @@ import com.company.courseservice.request.Appeal.CreateAppealRequest;
 import com.company.courseservice.response.Appeal.AppealResponse;
 import com.company.courseservice.services.AppealService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AppealServiceImpl implements AppealService {
@@ -26,62 +30,50 @@ public class AppealServiceImpl implements AppealService {
 
         AppealResponse appealResponse;
 
-        try {
-            Appeal appeal = Appeal.builder()
-                    .fullName(request.getFullName())
-                    .email(request.getEmail())
-                    .phoneNumber(request.getPhoneNumber())
-                    .message(request.getMessage())
-                    .sentDate(new Date())
-                    .build();
+        Appeal appeal = Appeal.builder()
+                .fullName(request.getFullName())
+                .email(request.getEmail())
+                .phoneNumber(request.getPhoneNumber())
+                .message(request.getMessage())
+                .sentDate(new Date())
+                .build();
 
-            appeal = appealRepository.save(appeal);
+        appeal = appealRepository.save(appeal);
 
-            appealResponse = modelMapper.map(appeal, AppealResponse.class);
+        appealResponse = modelMapper.map(appeal, AppealResponse.class);
 
-            return appealResponse;
-        } catch (Exception exception) {
-            // throw exception
-            return null;
-        }
+        return appealResponse;
     }
 
     @Override
     public List<AppealResponse> getAllAppeals() {
-        try {
-            List<Appeal> appeals = appealRepository.findAll();
-            List<AppealResponse> appealResponseList = new ArrayList<>();
+        List<AppealResponse> appealResponseList = new ArrayList<>();
+        List<Appeal> appeals = appealRepository.findAll();
 
-            for (Appeal appeal : appeals) {
-                AppealResponse appealResponse = modelMapper.map(appeal, AppealResponse.class);
-                appealResponseList.add(appealResponse);
-            }
+        appealResponseList = appeals.stream().map((appeal) -> modelMapper.map(appeal, AppealResponse.class)).collect(Collectors.toList());
 
-            return appealResponseList;
-        } catch (Exception exception) {
-            // exception
-            return null;
-        }
+        return appealResponseList;
     }
 
     @Override
     public List<AppealResponse> getAppealsByEmail(String email) {
-        try {
-            List<Appeal> appeals = appealRepository.findAllByEmail(email);
+        List<AppealResponse> appealResponseList = new ArrayList<>();
+        List<Appeal> appeals = appealRepository.findAllByEmail(email);
+      
+        appealResponseList = appeals.stream().map((appeal -> modelMapper.map(appeal, AppealResponse.class))).collect(Collectors.toList());
+      
+        return appealResponseList;
+    }
 
-            if (appeals == null)
-                throw new DataNotFoundException("Appeal not found by email");
+    @Override
+    public AppealResponse getAppeal(Long id) {
+        AppealResponse appealResponse;
 
-            List<AppealResponse> appealResponseList = new ArrayList<>();
+        Optional<Appeal> appeal = appealRepository.findById(id);
 
-            for (Appeal appeal : appeals) {
-                AppealResponse appealResponse = modelMapper.map(appeal, AppealResponse.class);
-                appealResponseList.add(appealResponse);
-            }
+        appealResponse = modelMapper.map(appeal.orElseThrow(
+                () -> new DataNotFoundException("Appeal with " + id + " id not found.")), AppealResponse.class);
 
-            return appealResponseList;
-        } catch (Exception exception) {
-            return null;
-        }
+        return appealResponse;
     }
 }

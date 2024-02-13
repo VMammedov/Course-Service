@@ -1,4 +1,4 @@
-package com.company.courseservice.request.category;
+package com.company.courseservice.request.Category;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

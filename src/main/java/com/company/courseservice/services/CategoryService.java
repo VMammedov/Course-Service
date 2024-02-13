@@ -1,9 +1,9 @@
 package com.company.courseservice.services;
 
-import com.company.courseservice.request.category.CreateCategoryRequest;
-import com.company.courseservice.response.category.CategoryResponse;
-import com.company.courseservice.response.category.CategoryWithSubCategoriesResponse;
-import com.company.courseservice.response.category.CreateCategoryResponse;
+import com.company.courseservice.request.Category.CreateCategoryRequest;
+import com.company.courseservice.response.Category.CategoryResponse;
+import com.company.courseservice.response.Category.CategoryWithSubCategoriesResponse;
+import com.company.courseservice.response.Category.CreateCategoryResponse;
 
 import java.util.List;
 

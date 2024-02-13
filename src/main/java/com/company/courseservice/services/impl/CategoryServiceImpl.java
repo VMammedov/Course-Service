@@ -2,20 +2,24 @@ package com.company.courseservice.services.impl;
 
 import com.company.courseservice.domain.Category;
 import com.company.courseservice.dto.CategoryDto;
+import com.company.courseservice.exception.DataNotFoundException;
 import com.company.courseservice.repository.CategoryRepository;
-import com.company.courseservice.request.category.CreateCategoryRequest;
-import com.company.courseservice.response.category.CategoryResponse;
-import com.company.courseservice.response.category.CategoryWithSubCategoriesResponse;
-import com.company.courseservice.response.category.CreateCategoryResponse;
+import com.company.courseservice.request.Category.CreateCategoryRequest;
+import com.company.courseservice.response.Category.CategoryResponse;
+import com.company.courseservice.response.Category.CategoryWithSubCategoriesResponse;
+import com.company.courseservice.response.Category.CreateCategoryResponse;
 import com.company.courseservice.services.CategoryService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
@@ -25,84 +29,46 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CreateCategoryResponse createCategory(CreateCategoryRequest request) {
-        Category category = new Category();
+        Category category = categoryRepository.save(Category.builder()
+                .name(request.getName()).build());
 
-        try {
-            category.setName(request.getName());
-
-            category = categoryRepository.save(category);
-
-            return CreateCategoryResponse.builder().id(category.getId()).name(category.getName()).build();
-        }
-        catch (Exception exception)
-        {
-            // exception
-            return null;
-        }
+        return CreateCategoryResponse.builder().id(category.getId()).name(category.getName()).build();
     }
 
     @Override
     public CategoryResponse getCategory(Long id) {
+        Optional<Category> category = categoryRepository.findById(id);
 
-        CategoryResponse categoryResponse;
-
-        try {
-            Optional<Category> category = categoryRepository.findById(id);
-            categoryResponse = modelMapper.map(
-                    category.orElseThrow(() -> new RuntimeException("s")),
-                    CategoryResponse.class);
-
-            return categoryResponse;
-        } catch (Exception exception)
-        {
-            // exception
-            return null;
-        }
+        return modelMapper.map(
+                category.orElseThrow(() -> new DataNotFoundException("Category with " + id + " id not found.")),
+                CategoryResponse.class);
     }
 
     @Override
     public List<CategoryResponse> getCategories() {
-        try {
-            List<Category> categories = categoryRepository.findAll();
-            List<CategoryResponse> categoryResponseList = new ArrayList<>();
+        List<Category> categories = categoryRepository.findAllWithoutSubCategories();
+        List<CategoryResponse> categoryResponseList = new ArrayList<>();
 
-            for(Category category : categories)
-            {
-                CategoryResponse categoryResponse = modelMapper.map(category, CategoryResponse.class);
-                categoryResponseList.add(categoryResponse);
-            }
+        categoryResponseList = categories.stream().map((category -> modelMapper.map(category, CategoryResponse.class))).collect(Collectors.toList());
 
-            return categoryResponseList;
-        } catch (Exception exception)
-        {
-            // exception
-            return null;
-        }
+        return categoryResponseList;
     }
 
     @Override
     public CategoryWithSubCategoriesResponse getCategoriesWithSubCategories() {
-        try {
-            List<Category> categories = categoryRepository.findAll();
-            List<CategoryDto> categoryDtoList = new ArrayList<>();
-            CategoryWithSubCategoriesResponse categoryResponse = new CategoryWithSubCategoriesResponse();
+        List<Category> categories = categoryRepository.findAll();
+        List<CategoryDto> categoryDtoList;
+        CategoryWithSubCategoriesResponse categoryResponse = new CategoryWithSubCategoriesResponse();
 
-            for(Category category : categories)
-            {
-                CategoryDto categoryDto = modelMapper.map(category, CategoryDto.class);
-                categoryDto.setCount(categoryDto.getSubCategories().size());
+        categoryDtoList = categories.stream().map((category)-> {
+            CategoryDto categoryDto = modelMapper.map(category, CategoryDto.class);
+            categoryDto.setCount(categoryDto.getSubCategories().size());
+            return categoryDto;
+        }).collect(Collectors.toList());
 
-                categoryDtoList.add(categoryDto);
-            }
+        categoryResponse.setData(categoryDtoList);
+        categoryResponse.setCount(categoryDtoList.size());
 
-            categoryResponse.setData(categoryDtoList);
-            categoryResponse.setCount(categoryDtoList.size());
-
-            return categoryResponse;
-        } catch (Exception exception)
-        {
-            // exception
-            return null;
-        }
+        return categoryResponse;
     }
 }
