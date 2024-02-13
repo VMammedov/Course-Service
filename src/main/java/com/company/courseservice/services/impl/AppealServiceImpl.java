@@ -59,9 +59,9 @@ public class AppealServiceImpl implements AppealService {
     public List<AppealResponse> getAppealsByEmail(String email) {
         List<AppealResponse> appealResponseList = new ArrayList<>();
         List<Appeal> appeals = appealRepository.findAllByEmail(email);
-
+      
         appealResponseList = appeals.stream().map((appeal -> modelMapper.map(appeal, AppealResponse.class))).collect(Collectors.toList());
-
+      
         return appealResponseList;
     }
 
