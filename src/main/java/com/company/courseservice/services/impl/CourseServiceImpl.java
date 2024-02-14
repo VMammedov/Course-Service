@@ -2,9 +2,11 @@ package com.company.courseservice.services.impl;
 
 import com.company.courseservice.domain.Course;
 import com.company.courseservice.domain.SubCategory;
+import com.company.courseservice.domain.User;
 import com.company.courseservice.exception.DataNotFoundException;
 import com.company.courseservice.repository.CourseRepository;
 import com.company.courseservice.repository.SubCategoryRepository;
+import com.company.courseservice.repository.UserRepository;
 import com.company.courseservice.request.Course.CreateCourseRequest;
 import com.company.courseservice.request.Course.UpdateCourseRequest;
 import com.company.courseservice.response.Course.CourseResponse;
@@ -14,7 +16,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.coyote.BadRequestException;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import utils.AuthUtil;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,6 +31,7 @@ public class CourseServiceImpl implements CourseService {
 
     private final CourseRepository courseRepository;
     private final SubCategoryRepository subCategoryRepository;
+    private final UserRepository userRepository;
     private final ModelMapper modelMapper;
 
     @Override
@@ -34,11 +39,15 @@ public class CourseServiceImpl implements CourseService {
         SubCategory subCategory = subCategoryRepository.findById(request.getSubCategoryId())
                 .orElseThrow(() -> new DataNotFoundException("SubCategory with " + request.getSubCategoryId() + " id not found!"));
 
+        User user = userRepository.findByEmail(AuthUtil.getCurrentUsername())
+                .orElseThrow(() -> new DataNotFoundException("User not found!"));
+
         Course course = Course.builder()
                 .name(request.getName())
                 .description(request.getDescription())
                 .price(request.getPrice())
                 .haveCertificate(request.isHaveCertificate())
+                .creator(user)
                 .subCategory(subCategory)
                 .createdDate(new Date())
                 .rating((byte)0)
