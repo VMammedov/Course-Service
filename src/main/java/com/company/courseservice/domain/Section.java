@@ -7,8 +7,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
 import org.hibernate.annotations.OnDelete;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.AllArgsConstructor;
 import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
