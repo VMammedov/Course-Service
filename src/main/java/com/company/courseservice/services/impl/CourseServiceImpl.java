@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.coyote.BadRequestException;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import utils.AuthUtil;
 
@@ -47,6 +46,7 @@ public class CourseServiceImpl implements CourseService {
                 .description(request.getDescription())
                 .price(request.getPrice())
                 .haveCertificate(request.isHaveCertificate())
+                .enabled(true)
                 .creator(user)
                 .subCategory(subCategory)
                 .createdDate(new Date())
@@ -67,14 +67,24 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public CourseResponse updateCourseById(Long id, UpdateCourseRequest request) {
+        SubCategory subCategory = subCategoryRepository.findById(request.getSubCategoryId())
+                .orElseThrow(() -> new DataNotFoundException("SubCategory with " + request.getSubCategoryId() + " id not found!"));
+
+        User user = userRepository.findByEmail(AuthUtil.getCurrentUsername())
+                .orElseThrow(() -> new DataNotFoundException("User not found!"));
+
         Course course = findCourseById(id);
+
         Course updateCourse = Course.builder()
                 .id(course.getId())
                 .name(request.getName())
                 .description(request.getDescription())
                 .price(request.getPrice())
-                .createdDate(new Date())
                 .haveCertificate(request.isHaveCertificate())
+                .enabled(true)
+                .creator(user)
+                .subCategory(subCategory)
+                .createdDate(new Date())
                 .rating((byte)0)
                 .build();
         course = courseRepository.save(updateCourse);
