@@ -46,8 +46,5 @@ public class SectionController {
     @DeleteMapping("deleteSectionById/{id}")
     public void deleteSectionById(@PathVariable("id") Long id){
          service.deleteSectionById(id);
-
     }
-
-
 }

@@ -12,6 +12,8 @@ import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.Date;
+
 @Entity
 @Getter
 @Setter
@@ -25,7 +27,7 @@ public class Review {
 
     private byte rate;
 
-    //private Date date;
+    private Date date;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
