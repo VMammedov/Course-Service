@@ -29,6 +29,8 @@ public class Section {
 
     private String name;
 
+    private Integer orderNumber;
+
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)

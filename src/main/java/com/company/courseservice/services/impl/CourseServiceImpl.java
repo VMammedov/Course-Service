@@ -38,7 +38,7 @@ public class CourseServiceImpl implements CourseService {
         SubCategory subCategory = subCategoryRepository.findById(request.getSubCategoryId())
                 .orElseThrow(() -> new DataNotFoundException("SubCategory with " + request.getSubCategoryId() + " id not found!"));
 
-        User user = userRepository.findByEmail(AuthUtil.getCurrentUsername())
+        User user = userRepository.findByEmail(AuthUtil.getCurrentUserEmail())
                 .orElseThrow(() -> new DataNotFoundException("User not found!"));
 
         Course course = Course.builder()
@@ -70,7 +70,7 @@ public class CourseServiceImpl implements CourseService {
         SubCategory subCategory = subCategoryRepository.findById(request.getSubCategoryId())
                 .orElseThrow(() -> new DataNotFoundException("SubCategory with " + request.getSubCategoryId() + " id not found!"));
 
-        User user = userRepository.findByEmail(AuthUtil.getCurrentUsername())
+        User user = userRepository.findByEmail(AuthUtil.getCurrentUserEmail())
                 .orElseThrow(() -> new DataNotFoundException("User not found!"));
 
         Course course = findCourseById(id);

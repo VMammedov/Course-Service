@@ -44,4 +44,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                         request.getDescription(false))
                 ,HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(IllegalRequestException.class)
+    public ResponseEntity<?> illegalRequestExceptionHandling(IllegalRequestException exception, WebRequest request) {
+        return new ResponseEntity<>(
+                new ErrorResponse(HttpStatus.BAD_REQUEST.value(),
+                        new Date(),
+                        exception.getMessage(),
+                        request.getDescription(false))
+                ,HttpStatus.BAD_REQUEST);
+    }
 }

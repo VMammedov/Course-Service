@@ -235,3 +235,49 @@ databaseChangeLog:
                   constraints:
                     foreignKeyName: fk_lectures_sections
                     references: sections(id)
+  - changeSet:
+      id: 5
+      author: vusalm
+      changes:
+        - addColumn:
+            tableName: lectures
+            columns:
+              - column:
+                  name: duration_by_seconds
+                  type: BIGINT
+  - changeSet:
+      id: 6
+      author: vusalm
+      changes:
+        - addColumn:
+            tableName: lectures
+            columns:
+              - column:
+                  name: order
+                  type: INTEGER
+        - addColumn:
+            tableName: reviews
+            columns:
+              - column:
+                  name: date
+                  type: DATETIME
+        - addColumn:
+            tableName: sections
+            columns:
+              - column:
+                  name: order
+                  type: INTEGER
+  - changeSet:
+      id: 7
+      author: vusalm
+      changes:
+        - renameColumn:
+            tableName: sections
+            oldColumnName: order
+            newColumnName: order_number
+            columnDataType: INTEGER
+        - renameColumn:
+            tableName: lectures
+            oldColumnName: order
+            newColumnName: order_number
+            columnDataType: INTEGER
