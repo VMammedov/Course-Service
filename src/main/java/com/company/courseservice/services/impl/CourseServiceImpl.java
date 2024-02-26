@@ -4,6 +4,7 @@ import com.company.courseservice.domain.Course;
 import com.company.courseservice.domain.SubCategory;
 import com.company.courseservice.domain.User;
 import com.company.courseservice.exception.DataNotFoundException;
+import com.company.courseservice.exception.IllegalRequestException;
 import com.company.courseservice.repository.CourseRepository;
 import com.company.courseservice.repository.SubCategoryRepository;
 import com.company.courseservice.repository.UserRepository;
@@ -50,7 +51,7 @@ public class CourseServiceImpl implements CourseService {
                 .creator(user)
                 .subCategory(subCategory)
                 .createdDate(new Date())
-                .rating((byte)0)
+                .rating((byte) 0)
                 .build();
 
         course = courseRepository.save(course);
@@ -60,8 +61,8 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public List<CourseResponse> getAllCourse() {
-        List<Course> courses= courseRepository.findAll();
-        return courses.stream().map(course->
+        List<Course> courses = courseRepository.findAll();
+        return courses.stream().map(course ->
                 modelMapper.map(course, CourseResponse.class)).collect(Collectors.toList());
     }
 
@@ -72,33 +73,49 @@ public class CourseServiceImpl implements CourseService {
 
         User user = userRepository.findByEmail(AuthUtil.getCurrentUserEmail())
                 .orElseThrow(() -> new DataNotFoundException("User not found!"));
+        boolean isValidCourseForUser = courseRepository.existsCourseForUser(id,AuthUtil.getCurrentUserEmail());
+        if(isValidCourseForUser){
+            Course course = findCourseById(id);
 
-        Course course = findCourseById(id);
+            Course updateCourse = Course.builder()
+                    .id(course.getId())
+                    .name(request.getName())
+                    .description(request.getDescription())
+                    .price(request.getPrice())
+                    .haveCertificate(request.isHaveCertificate())
+                    .enabled(true)
+                    .creator(user)
+                    .subCategory(subCategory)
+                    .createdDate(new Date())
+                    .rating((byte) 0)
+                    .build();
+            course = courseRepository.save(updateCourse);
+            return modelMapper.map(course, CourseResponse.class);
+        }else{
+            throw new IllegalRequestException("This Course " +
+                    id +
+                    " not exist " + user);
+        }
 
-        Course updateCourse = Course.builder()
-                .id(course.getId())
-                .name(request.getName())
-                .description(request.getDescription())
-                .price(request.getPrice())
-                .haveCertificate(request.isHaveCertificate())
-                .enabled(true)
-                .creator(user)
-                .subCategory(subCategory)
-                .createdDate(new Date())
-                .rating((byte)0)
-                .build();
-        course = courseRepository.save(updateCourse);
-        return modelMapper.map(course, CourseResponse.class);
     }
 
     @Override
     @SneakyThrows
     public void deleteCourseById(Long id) {
-        Course course = findCourseById(id);
-        if(!course.isEnabled())
-            throw new BadRequestException("Course already deleted!");
-        course.setEnabled(false);
-        courseRepository.save(course);
+        String userEmail = AuthUtil.getCurrentUserEmail();
+        boolean isValidCourseForUser = courseRepository.existsCourseForUser(id,userEmail);
+        if(isValidCourseForUser){
+            Course course = findCourseById(id);
+            if (!course.isEnabled())
+                throw new BadRequestException("Course already deleted!");
+            course.setEnabled(false);
+            courseRepository.save(course);
+        }else{
+            throw new IllegalRequestException("This Course " +
+                    id +
+                    " not exist " + userEmail);
+        }
+
     }
 
     @Override
@@ -118,9 +135,9 @@ public class CourseServiceImpl implements CourseService {
         return courseResponseList;
     }
 
-    private Course findCourseById(Long id){
-        return courseRepository.findById(id).orElseThrow(()->
-                new DataNotFoundException("Course not found with "+id+" id!"));
+    private Course findCourseById(Long id) {
+        return courseRepository.findById(id).orElseThrow(() ->
+                new DataNotFoundException("Course not found with " + id + " id!"));
     }
 
 
