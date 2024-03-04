@@ -13,7 +13,7 @@ public class CreateLectureRequest {
     private String name;
     private String url;
     private Long durationBySeconds;
-    private Integer order;
+    private Integer orderNumber;
     private Long courseId;
     private Long sectionId;
 }

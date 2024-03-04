@@ -1,14 +1,15 @@
 package com.company.courseservice.services.impl;
 
 import com.company.courseservice.domain.Lecture;
+import com.company.courseservice.exception.DataNotFoundException;
 import com.company.courseservice.exception.IllegalRequestException;
 import com.company.courseservice.mappers.LectureMapper;
 import com.company.courseservice.repository.CourseRepository;
 import com.company.courseservice.repository.LectureRepository;
 import com.company.courseservice.request.Lecture.CreateBulkLectureRequest;
 import com.company.courseservice.request.Lecture.CreateLectureRequest;
-import com.company.courseservice.request.Lecture.UpdateBulkLectureRequest;
 import com.company.courseservice.request.Lecture.UpdateLectureRequest;
+import com.company.courseservice.response.Lecture.CreateBulkLectureResponse;
 import com.company.courseservice.response.Lecture.CreateLectureResponse;
 import com.company.courseservice.response.Lecture.LectureListResponse;
 import com.company.courseservice.response.Lecture.LectureResponse;
@@ -20,10 +21,10 @@ import org.springframework.transaction.annotation.Transactional;
 import utils.AuthUtil;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -52,7 +53,7 @@ public class LectureServiceImpl implements LectureService {
 
     @Override
     @Transactional
-    public CreateLectureResponse createBulkLecture(CreateBulkLectureRequest request) {
+    public CreateBulkLectureResponse createBulkLecture(CreateBulkLectureRequest request) {
 
         Long courseId = request.getCourseId();
         String currentUserEmail = AuthUtil.getCurrentUserEmail();
@@ -81,32 +82,69 @@ public class LectureServiceImpl implements LectureService {
             item.setCourseId(courseId);
             lectures.add(LectureMapper.INSTANCE.createLectureRequestToLecture(item));
         }
-        lectureRepository.saveAll(lectures);
-        return null;
+        List<Lecture> savedLectures = lectureRepository.saveAll(lectures);
+
+        List<CreateLectureResponse> lectureResponses = savedLectures.stream().map(LectureMapper.INSTANCE :: lectureToCreateLectureResponse).collect(Collectors.toList());
+
+        return CreateBulkLectureResponse.builder()
+                .lectures(lectureResponses)
+                .courseId(courseId)
+                .build();
     }
 
     @Override
     public LectureResponse getLectureById(Long id) {
-        return null;
+        Lecture lecture = findLectureById(id);
+        return LectureMapper.INSTANCE.lectureToLectureResponse(lecture);
     }
 
     @Override
     public LectureListResponse getLectureList(Long courseId, Long sectionId) {
-        return null;
+
+        LectureListResponse lectureListResponse = new LectureListResponse();
+        lectureListResponse.setSectionId(sectionId);
+
+        if (!courseRepository.existsSectionForCourse(courseId, sectionId))
+            throw new IllegalRequestException("Section does not belong to the course!");
+
+        lectureRepository.findAllByCourseIdAndSectionId(courseId, sectionId)
+                .forEach(lecture ->  lectureListResponse.getLectures().add(LectureMapper.INSTANCE.lectureToLectureResponse(lecture)));
+
+        return lectureListResponse;
     }
 
     @Override
     public LectureResponse updateLecture(UpdateLectureRequest request) {
-        return null;
-    }
 
-    @Override
-    public LectureResponse updateBulkLecture(UpdateBulkLectureRequest request) {
-        return null;
+        String userEmail = AuthUtil.getCurrentUserEmail();
+
+        Lecture lecture = lectureRepository.findLectureByIdAndForUser(request.getId(), userEmail)
+                .orElseThrow(() -> new DataNotFoundException("Lecture not found!"));
+
+        lecture.setName(request.getName());
+        lecture.setUrl(request.getUrl());
+        lecture.setDurationBySeconds(request.getDurationBySeconds());
+
+        lectureRepository.save(lecture);
+
+        return LectureMapper.INSTANCE.lectureToLectureResponse(lecture);
     }
 
     @Override
     public LectureResponse deleteLecture(Long id) {
-        return null;
+
+        String userEmail = AuthUtil.getCurrentUserEmail();
+
+        Lecture lecture = lectureRepository.findLectureByIdAndForUser(id, userEmail)
+                .orElseThrow(() -> new DataNotFoundException("Lecture not found!"));
+
+        lectureRepository.delete(lecture);
+
+        return LectureMapper.INSTANCE.lectureToLectureResponse(lecture);
+    }
+
+    private Lecture findLectureById(Long id){
+        return lectureRepository.findById(id).orElseThrow(()->
+                new DataNotFoundException("Lecture not found with "+id+" id!"));
     }
 }

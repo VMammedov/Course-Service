@@ -122,6 +122,4 @@ public class CourseServiceImpl implements CourseService {
         return courseRepository.findById(id).orElseThrow(()->
                 new DataNotFoundException("Course not found with "+id+" id!"));
     }
-
-
 }
