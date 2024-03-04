@@ -1,42 +1,42 @@
 package com.company.courseservice.exception;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.Date;
 
+@Slf4j
 @RestControllerAdvice
-public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+public class GlobalExceptionHandler {
 
-    @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<?> badRequestExceptionHandling(Exception exception, WebRequest request)
-    {
+    @ExceptionHandler(DataNotFoundException.class)
+    public ResponseEntity<?> dataNotFoundExceptionHandling(DataNotFoundException exception, WebRequest request) {
         return new ResponseEntity<>(
                 new ErrorResponse(HttpStatus.BAD_REQUEST.value(),
                         new Date(),
                         exception.getMessage(),
                         request.getDescription(false))
-                , HttpStatus.BAD_REQUEST);
+                ,HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(InternalServerException.class)
-    public ResponseEntity<?> internalServerErrorExceptionHandling(Exception exception, WebRequest request)
-    {
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<?> missingServletRequestParameterExceptionHandling(MissingServletRequestParameterException exception, WebRequest request) {
         return new ResponseEntity<>(
-                new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                new ErrorResponse(HttpStatus.BAD_REQUEST.value(),
                         new Date(),
                         exception.getMessage(),
                         request.getDescription(false))
-                , HttpStatus.INTERNAL_SERVER_ERROR);
+                ,HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(DataNotFoundException.class)
-    public ResponseEntity<?> dataNotFoundExceptionHandling(DataNotFoundException exception, WebRequest request) {
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<?> badRequestExceptionHandling(BadRequestException exception, WebRequest request) {
         return new ResponseEntity<>(
                 new ErrorResponse(HttpStatus.BAD_REQUEST.value(),
                         new Date(),
