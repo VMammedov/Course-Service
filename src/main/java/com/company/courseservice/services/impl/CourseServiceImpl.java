@@ -5,6 +5,7 @@ import com.company.courseservice.domain.SubCategory;
 import com.company.courseservice.domain.User;
 import com.company.courseservice.exception.DataNotFoundException;
 import com.company.courseservice.exception.IllegalRequestException;
+import com.company.courseservice.mappers.CourseMapper;
 import com.company.courseservice.repository.CourseRepository;
 import com.company.courseservice.repository.SubCategoryRepository;
 import com.company.courseservice.repository.UserRepository;
@@ -81,7 +82,7 @@ public class CourseServiceImpl implements CourseService {
             course.setPrice(request.getPrice());
             course.setHaveCertificate(request.isHaveCertificate());
             course.setSubCategory(subCategory);
-            return modelMapper.map(course, CourseResponse.class);
+            return CourseMapper.INSTANCE.courseToCourseResponse(course);
         }else{
             throw new IllegalRequestException("This Course " +
                     id +
