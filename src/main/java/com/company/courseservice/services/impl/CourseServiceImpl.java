@@ -4,6 +4,7 @@ import com.company.courseservice.domain.Course;
 import com.company.courseservice.domain.SubCategory;
 import com.company.courseservice.domain.User;
 import com.company.courseservice.exception.DataNotFoundException;
+import com.company.courseservice.mappers.CourseMapper;
 import com.company.courseservice.repository.CourseRepository;
 import com.company.courseservice.repository.SubCategoryRepository;
 import com.company.courseservice.repository.UserRepository;
@@ -15,11 +16,9 @@ import com.company.courseservice.services.CourseService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.coyote.BadRequestException;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import utils.AuthUtil;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,7 +30,6 @@ public class CourseServiceImpl implements CourseService {
     private final CourseRepository courseRepository;
     private final SubCategoryRepository subCategoryRepository;
     private final UserRepository userRepository;
-    private final ModelMapper modelMapper;
 
     @Override
     public CreateCourseResponse createCourse(CreateCourseRequest request) {
@@ -55,14 +53,13 @@ public class CourseServiceImpl implements CourseService {
 
         course = courseRepository.save(course);
 
-        return modelMapper.map(course, CreateCourseResponse.class);
+        return CourseMapper.INSTANCE.courseToCreateCourseResponse(course);
     }
 
     @Override
     public List<CourseResponse> getAllCourse() {
         List<Course> courses= courseRepository.findAll();
-        return courses.stream().map(course->
-                modelMapper.map(course, CourseResponse.class)).collect(Collectors.toList());
+        return courses.stream().map(CourseMapper.INSTANCE::courseToCourseResponse).collect(Collectors.toList());
     }
 
     @Override
@@ -88,7 +85,7 @@ public class CourseServiceImpl implements CourseService {
                 .rating((byte)0)
                 .build();
         course = courseRepository.save(updateCourse);
-        return modelMapper.map(course, CourseResponse.class);
+        return CourseMapper.INSTANCE.courseToCourseResponse(course);
     }
 
     @Override
@@ -104,22 +101,21 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public CourseResponse getCourseById(Long id) {
         Course course = findCourseById(id);
-        return modelMapper.map(course, CourseResponse.class);
+        return CourseMapper.INSTANCE.courseToCourseResponse(course);
     }
 
     @Override
     public List<CourseResponse> getCoursesByName(String name) {
-        List<CourseResponse> courseResponseList = new ArrayList<>();
+        List<CourseResponse> courseResponseList;
         List<Course> courseList = courseRepository.findAllByNameLike(name);
 
-        courseResponseList = courseList.stream().map(course ->
-                modelMapper.map(course, CourseResponse.class)).collect(Collectors.toList());
+        courseResponseList = courseList.stream().map(CourseMapper.INSTANCE::courseToCourseResponse).collect(Collectors.toList());
 
         return courseResponseList;
     }
 
     private Course findCourseById(Long id){
         return courseRepository.findById(id).orElseThrow(()->
-                new DataNotFoundException("Course not found with "+id+" id!"));
+                new DataNotFoundException("Course not found with " + id + " id!"));
     }
 }
