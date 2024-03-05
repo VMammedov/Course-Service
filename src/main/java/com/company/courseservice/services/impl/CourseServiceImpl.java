@@ -5,6 +5,7 @@ import com.company.courseservice.domain.SubCategory;
 import com.company.courseservice.domain.User;
 import com.company.courseservice.exception.DataNotFoundException;
 import com.company.courseservice.exception.IllegalRequestException;
+import com.company.courseservice.mappers.CourseMapper;
 import com.company.courseservice.repository.CourseRepository;
 import com.company.courseservice.repository.SubCategoryRepository;
 import com.company.courseservice.repository.UserRepository;
@@ -76,21 +77,12 @@ public class CourseServiceImpl implements CourseService {
         boolean isValidCourseForUser = courseRepository.existsCourseForUser(id,AuthUtil.getCurrentUserEmail());
         if(isValidCourseForUser){
             Course course = findCourseById(id);
-
-            Course updateCourse = Course.builder()
-                    .id(course.getId())
-                    .name(request.getName())
-                    .description(request.getDescription())
-                    .price(request.getPrice())
-                    .haveCertificate(request.isHaveCertificate())
-                    .enabled(true)
-                    .creator(user)
-                    .subCategory(subCategory)
-                    .createdDate(new Date())
-                    .rating((byte) 0)
-                    .build();
-            course = courseRepository.save(updateCourse);
-            return modelMapper.map(course, CourseResponse.class);
+            course.setName(request.getName());
+            course.setDescription(request.getDescription());
+            course.setPrice(request.getPrice());
+            course.setHaveCertificate(request.isHaveCertificate());
+            course.setSubCategory(subCategory);
+            return CourseMapper.INSTANCE.courseToCourseResponse(course);
         }else{
             throw new IllegalRequestException("This Course " +
                     id +

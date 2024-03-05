@@ -3,6 +3,7 @@ package com.company.courseservice.services.impl;
 import com.company.courseservice.domain.Course;
 import com.company.courseservice.domain.Section;
 import com.company.courseservice.exception.DataNotFoundException;
+import com.company.courseservice.mappers.SectionMapper;
 import com.company.courseservice.repository.CourseRepository;
 import com.company.courseservice.repository.SectionRepository;
 import com.company.courseservice.request.Section.CreateSectionRequest;
@@ -22,7 +23,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SectionServiceImpl implements SectionService {
     private final SectionRepository sectionRepository;
-    private final ModelMapper modelMapper;
     private final CourseRepository courseRepository;
 
     @Override
@@ -34,7 +34,7 @@ public class SectionServiceImpl implements SectionService {
                 .course(course)
                 .build();
         section = sectionRepository.save(section);
-        return modelMapper.map(section, CreatedSectionResponse.class);
+        return SectionMapper.INSTANCE.sectionToCreateSectionResponse(section);
     }
 
     @Override
@@ -43,16 +43,14 @@ public class SectionServiceImpl implements SectionService {
                 new DataNotFoundException("Course not found by "+courseId+" id"));
         List<Section> sections = sectionRepository.findAllByCourse(course);
 
-        return sections.stream().map(section ->
-                modelMapper.map(section, CreatedSectionResponse.class)).collect(Collectors.toList());
+        return sections.stream().map(SectionMapper.INSTANCE::sectionToCreateSectionResponse).collect(Collectors.toList());
     }
     @Override
     public List<SectionResponse> getSectionByName(String name) {
         List<SectionResponse> sectionResponseList = new ArrayList<>();
         List<Section> sectionList = sectionRepository.findAllByNameLike(name);
 
-        sectionResponseList = sectionList.stream().map(section ->
-                modelMapper.map(section, SectionResponse.class)).collect(Collectors.toList());
+        sectionResponseList = sectionList.stream().map(SectionMapper.INSTANCE::sectionToSectionResponse).collect(Collectors.toList());
         return sectionResponseList;
     }
     @Override
@@ -68,13 +66,13 @@ public class SectionServiceImpl implements SectionService {
 
         section = sectionRepository.save(updateSection);
 
-        return modelMapper.map(section, SectionResponse.class);
+        return SectionMapper.INSTANCE.sectionToSectionResponse(section);
     }
     @Override
     public CreatedSectionResponse getSectionById(Long id) {
         Section section = sectionRepository.findById(id).orElseThrow(()->
                 new DataNotFoundException("Section not found by "+id+" id"));
-        return modelMapper.map(section, CreatedSectionResponse.class);
+        return SectionMapper.INSTANCE.sectionToCreateSectionResponse(section);
     }
     @Override
     public void deleteSectionById(Long id) {
