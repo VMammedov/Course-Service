@@ -2,7 +2,6 @@ package com.company.courseservice.mappers;
 
 import com.company.courseservice.domain.Lecture;
 import com.company.courseservice.request.Lecture.CreateLectureRequest;
-import com.company.courseservice.request.Lecture.UpdateLectureRequest;
 import com.company.courseservice.response.Lecture.CreateLectureResponse;
 import com.company.courseservice.response.Lecture.LectureResponse;
 import org.mapstruct.Mapper;

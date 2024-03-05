@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -47,7 +46,7 @@ public class AppealServiceImpl implements AppealService {
 
     @Override
     public List<AppealResponse> getAllAppeals() {
-        List<AppealResponse> appealResponseList = new ArrayList<>();
+        List<AppealResponse> appealResponseList;
         List<Appeal> appeals = appealRepository.findAll();
 
         appealResponseList = appeals.stream().map((appeal) -> modelMapper.map(appeal, AppealResponse.class)).collect(Collectors.toList());
@@ -57,7 +56,7 @@ public class AppealServiceImpl implements AppealService {
 
     @Override
     public List<AppealResponse> getAppealsByEmail(String email) {
-        List<AppealResponse> appealResponseList = new ArrayList<>();
+        List<AppealResponse> appealResponseList;
         List<Appeal> appeals = appealRepository.findAllByEmail(email);
       
         appealResponseList = appeals.stream().map((appeal -> modelMapper.map(appeal, AppealResponse.class))).collect(Collectors.toList());

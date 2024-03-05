@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,7 +47,7 @@ public class SectionServiceImpl implements SectionService {
     }
     @Override
     public List<SectionResponse> getSectionByName(String name) {
-        List<SectionResponse> sectionResponseList = new ArrayList<>();
+        List<SectionResponse> sectionResponseList;
         List<Section> sectionList = sectionRepository.findAllByNameLike(name);
 
         sectionResponseList = sectionList.stream().map(section ->

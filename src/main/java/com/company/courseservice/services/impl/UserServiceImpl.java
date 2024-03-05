@@ -5,7 +5,6 @@ import com.company.courseservice.services.UserService;
 import lombok.RequiredArgsConstructor;
 import com.company.courseservice.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -20,13 +19,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetailsService userDetailsService() {
-        return new UserDetailsService() {
-            @Override
-            public UserDetails loadUserByUsername(String email) {
-                return userRepository.findByEmail(email)
-                        .orElseThrow(() -> new UsernameNotFoundException("User with " + email + " email not found!"));
-            }
-        };
+        return email -> userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User with " + email + " email not found!"));
     }
 
     @Override
