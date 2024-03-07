@@ -3,6 +3,7 @@ package com.company.courseservice.services.impl;
 import com.company.courseservice.domain.Category;
 import com.company.courseservice.domain.SubCategory;
 import com.company.courseservice.exception.DataNotFoundException;
+import com.company.courseservice.mappers.SubCategoryMapper;
 import com.company.courseservice.repository.CategoryRepository;
 import com.company.courseservice.repository.SubCategoryRepository;
 import com.company.courseservice.request.SubCategory.CreateSubCategoryRequest;
@@ -11,10 +12,8 @@ import com.company.courseservice.response.SubCategory.SubCategoryResponse;
 import com.company.courseservice.services.SubCategoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,7 +24,6 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
     private final SubCategoryRepository subCategoryRepository;
     private final CategoryRepository categoryRepository;
-    private final ModelMapper modelMapper;
 
     @Override
     public CreateSubCategoryResponse createSubCategory(CreateSubCategoryRequest request) {
@@ -47,16 +45,16 @@ public class SubCategoryServiceImpl implements SubCategoryService {
         SubCategory subCategory = subCategoryRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("SubCategory with " + id + " id not found!"));
 
-        return modelMapper.map(subCategory, SubCategoryResponse.class);
+        return SubCategoryMapper.INSTANCE.subCategoryToSubCategoryResponse(subCategory);
     }
 
     @Override
     public List<SubCategoryResponse> getSubCategories() {
-        List<SubCategoryResponse> subCategoryResponseList = new ArrayList<>();
+        List<SubCategoryResponse> subCategoryResponseList;
         List<SubCategory> subCategories = subCategoryRepository.findAll();
 
         subCategoryResponseList = subCategories.stream()
-                .map(subCategory -> modelMapper.map(subCategory, SubCategoryResponse.class))
+                .map(SubCategoryMapper.INSTANCE::subCategoryToSubCategoryResponse)
                 .collect(Collectors.toList());
 
         return subCategoryResponseList;

@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,12 +29,14 @@ public class AppealServiceImpl implements AppealService {
 
     @Override
     public List<AppealResponse> getAllAppeals() {
+
         List<Appeal> appeals = appealRepository.findAll();
         return appeals.stream().map(AppealMapper.INSTANCE::appealToAppealResponse).collect(Collectors.toList());
     }
 
     @Override
     public List<AppealResponse> getAppealsByEmail(String email) {
+
         List<Appeal> appeals = appealRepository.findAllByEmail(email);
 
         return appeals.stream().map(AppealMapper.INSTANCE::appealToAppealResponse).collect(Collectors.toList());
