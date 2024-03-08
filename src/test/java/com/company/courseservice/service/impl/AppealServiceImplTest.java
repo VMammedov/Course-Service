@@ -1,7 +1,6 @@
 package com.company.courseservice.service.impl;
 
 import com.company.courseservice.domain.Appeal;
-import com.company.courseservice.mappers.AppealMapper;
 import com.company.courseservice.repository.AppealRepository;
 import com.company.courseservice.request.Appeal.CreateAppealRequest;
 import com.company.courseservice.response.Appeal.AppealResponse;
@@ -25,8 +24,7 @@ public class AppealServiceImplTest {
 
     @Mock
     private AppealRepository appealRepository;
-    @Mock
-    private AppealMapper appealMapper;
+
     @InjectMocks
     private AppealServiceImpl appealService;
 
@@ -75,8 +73,6 @@ public class AppealServiceImplTest {
         existingAppeal.setPhoneNumber("+test");
         existingAppeal.setMessage("testMessage");
         when(appealRepository.findById(1L)).thenReturn(Optional.of(existingAppeal));
-        when(appealMapper.appealToAppealResponse(existingAppeal)).thenReturn(new AppealResponse());
-
         //Act
         AppealResponse response = appealService.getAppeal(1L);
 
@@ -90,8 +86,6 @@ public class AppealServiceImplTest {
         //Arrange
         List<Appeal> appeals = Arrays.asList(new Appeal(), new Appeal());
         when(appealRepository.findAll()).thenReturn(appeals);
-        when(appealMapper.appealToAppealResponse(any(Appeal.class))).thenReturn(new AppealResponse());
-
         //Act
         List<AppealResponse> response = appealService.getAllAppeals();
 
@@ -118,7 +112,6 @@ public class AppealServiceImplTest {
         List<Appeal> appeals = Arrays.asList(appeal1, appeal2);
 
         when(appealRepository.findAllByEmail("test@gmail.com")).thenReturn(appeals);
-        when(appealMapper.appealToAppealResponse(any(Appeal.class))).thenReturn(new AppealResponse());
         //Act
         List<AppealResponse> responses = appealService.getAppealsByEmail("test@gmail.com");
         //Assert

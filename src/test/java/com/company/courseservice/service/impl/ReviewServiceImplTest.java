@@ -4,7 +4,6 @@ import com.company.courseservice.domain.Course;
 import com.company.courseservice.domain.Review;
 import com.company.courseservice.domain.User;
 import com.company.courseservice.exception.IllegalRequestException;
-import com.company.courseservice.mappers.ReviewMapper;
 import com.company.courseservice.repository.ReviewRepository;
 import com.company.courseservice.request.Review.CreateReviewRequest;
 import com.company.courseservice.response.Review.CreateReviewResponse;
@@ -20,16 +19,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-class ReviewServiceImplTest {
+public class ReviewServiceImplTest {
 
     @Mock
     private ReviewRepository reviewRepository;
-    @Mock
-    private ReviewMapper reviewMapper;
     @InjectMocks
     private ReviewServiceImpl reviewService;
 
@@ -54,7 +53,6 @@ class ReviewServiceImplTest {
         when(reviewRepository.existsReviewByCourseIdAndUserId(request.getCourseId(), request.getUserId()))
                 .thenReturn(false);
         when(reviewRepository.save(any(Review.class))).thenReturn(review);
-        when(reviewMapper.reviewToCreateReviewResponse(review)).thenReturn(new CreateReviewResponse());
         // Act
         CreateReviewResponse response = reviewService.createReview(request);
 
@@ -63,7 +61,7 @@ class ReviewServiceImplTest {
     }
 
     @Test
-    void when_call_create_review_if_review_already_exists() {
+    public void when_call_create_review_if_review_already_exists() {
         // Arrange
         CreateReviewRequest request = new CreateReviewRequest();
         request.setCourseId(1L);
@@ -77,12 +75,10 @@ class ReviewServiceImplTest {
     }
 
     @Test
-    void when_call_get_all_reviews_then_return_success() {
+    public void when_call_get_all_reviews_then_return_success() {
         //Arrange
         List<Review> reviews = Arrays.asList(new Review(), new Review());
         when(reviewRepository.findAll()).thenReturn(reviews);
-        when(reviewMapper.reviewToReviewResponse(any(Review.class))).thenReturn(new ReviewResponse());
-
         //Act
         List<ReviewResponse> response = reviewService.getAllReviews();
 
@@ -91,13 +87,11 @@ class ReviewServiceImplTest {
     }
 
     @Test
-    void when_given_id_then_return_success() {
+    public void when_given_id_then_return_success() {
         //Arrange
         Review existingReview = new Review();
         existingReview.setId(1L);
         when(reviewRepository.findById(1L)).thenReturn(Optional.of(existingReview));
-        when(reviewMapper.reviewToReviewResponse(existingReview)).thenReturn(new ReviewResponse());
-
         //Act
         ReviewResponse response = reviewService.getReviewById(1L);
 
@@ -106,7 +100,7 @@ class ReviewServiceImplTest {
     }
 
     @Test
-    void when_given_user_id_then_return_success() {
+    public void when_given_user_id_then_return_success() {
         // Arrange
         Long userId = 123L;
         User user = new User();
@@ -119,8 +113,6 @@ class ReviewServiceImplTest {
 
 
         when(reviewRepository.findAllByUserId(userId)).thenReturn(reviews);
-        when(reviewMapper.reviewToReviewResponse(any(Review.class))).thenReturn(new ReviewResponse());
-
         // Act
         List<ReviewResponse> responseList = reviewService.getReviewsByUserId(userId);
 
@@ -131,7 +123,7 @@ class ReviewServiceImplTest {
     }
 
     @Test
-    void when_given_course_id_then_return_success() {
+    public void when_given_course_id_then_return_success() {
         // Arrange
         Long courseId = 123L;
         Course course = new Course();
@@ -144,7 +136,6 @@ class ReviewServiceImplTest {
 
 
         when(reviewRepository.findAllByUserId(courseId)).thenReturn(reviews);
-        when(reviewMapper.reviewToReviewResponse(any(Review.class))).thenReturn(new ReviewResponse());
 
         // Act
         List<ReviewResponse> responseList = reviewService.getReviewsByUserId(courseId);
@@ -155,11 +146,10 @@ class ReviewServiceImplTest {
     }
 
     @Test
-    void updateReviewById() {
-
+    public void updateReviewById() {
     }
 
     @Test
-    void deleteReviewById() {
+    public void deleteReviewById() {
     }
 }
