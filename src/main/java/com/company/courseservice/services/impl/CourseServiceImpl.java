@@ -4,6 +4,7 @@ import com.company.courseservice.domain.Course;
 import com.company.courseservice.domain.SubCategory;
 import com.company.courseservice.domain.User;
 import com.company.courseservice.exception.DataNotFoundException;
+import com.company.courseservice.exception.IllegalRequestException;
 import com.company.courseservice.mappers.CourseMapper;
 import com.company.courseservice.repository.CourseRepository;
 import com.company.courseservice.repository.SubCategoryRepository;
@@ -48,7 +49,7 @@ public class CourseServiceImpl implements CourseService {
                 .creator(user)
                 .subCategory(subCategory)
                 .createdDate(new Date())
-                .rating((byte)0)
+                .rating((byte) 0)
                 .build();
 
         course = courseRepository.save(course);
@@ -69,33 +70,40 @@ public class CourseServiceImpl implements CourseService {
 
         User user = userRepository.findByEmail(AuthUtil.getCurrentUserEmail())
                 .orElseThrow(() -> new DataNotFoundException("User not found!"));
+        boolean isValidCourseForUser = courseRepository.existsCourseForUser(id,AuthUtil.getCurrentUserEmail());
+        if(isValidCourseForUser){
+            Course course = findCourseById(id);
+            course.setName(request.getName());
+            course.setDescription(request.getDescription());
+            course.setPrice(request.getPrice());
+            course.setHaveCertificate(request.isHaveCertificate());
+            course.setSubCategory(subCategory);
+            return CourseMapper.INSTANCE.courseToCourseResponse(course);
+        }else{
+            throw new IllegalRequestException("This Course " +
+                    id +
+                    " not exist " + user);
+        }
 
-        Course course = findCourseById(id);
-
-        Course updateCourse = Course.builder()
-                .id(course.getId())
-                .name(request.getName())
-                .description(request.getDescription())
-                .price(request.getPrice())
-                .haveCertificate(request.isHaveCertificate())
-                .enabled(true)
-                .creator(user)
-                .subCategory(subCategory)
-                .createdDate(new Date())
-                .rating((byte)0)
-                .build();
-        course = courseRepository.save(updateCourse);
-        return CourseMapper.INSTANCE.courseToCourseResponse(course);
     }
 
     @Override
     @SneakyThrows
     public void deleteCourseById(Long id) {
-        Course course = findCourseById(id);
-        if(!course.isEnabled())
-            throw new BadRequestException("Course already deleted!");
-        course.setEnabled(false);
-        courseRepository.save(course);
+        String userEmail = AuthUtil.getCurrentUserEmail();
+        boolean isValidCourseForUser = courseRepository.existsCourseForUser(id,userEmail);
+        if(isValidCourseForUser){
+            Course course = findCourseById(id);
+            if (!course.isEnabled())
+                throw new BadRequestException("Course already deleted!");
+            course.setEnabled(false);
+            courseRepository.save(course);
+        }else{
+            throw new IllegalRequestException("This Course " +
+                    id +
+                    " not exist " + userEmail);
+        }
+
     }
 
     @Override
@@ -113,6 +121,7 @@ public class CourseServiceImpl implements CourseService {
 
         return courseResponseList;
     }
+
 
     private Course findCourseById(Long id){
         return courseRepository.findById(id).orElseThrow(()->
