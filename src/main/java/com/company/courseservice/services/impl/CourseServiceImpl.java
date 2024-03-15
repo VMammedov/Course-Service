@@ -15,8 +15,6 @@ import com.company.courseservice.response.Course.CourseResponse;
 import com.company.courseservice.response.Course.CreateCourseResponse;
 import com.company.courseservice.services.CourseService;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 import utils.AuthUtil;
 
@@ -49,7 +47,7 @@ public class CourseServiceImpl implements CourseService {
                 .creator(user)
                 .subCategory(subCategory)
                 .createdDate(new Date())
-                .rating((byte)0)
+                .rating((byte) 0)
                 .build();
 
         return CourseMapper.INSTANCE.courseToCreateCourseResponse(courseRepository.save(course));
@@ -84,7 +82,6 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public void deleteCourseById(Long id) {
-
         String currentUserEmail = AuthUtil.getCurrentUserEmail();
         Course course = courseRepository.findCourseByIdAndCreatorEmail(id, currentUserEmail)
                 .orElseThrow(() -> new IllegalRequestException("Course does not belong to the user!"));
@@ -112,6 +109,7 @@ public class CourseServiceImpl implements CourseService {
 
         return courseResponseList;
     }
+
 
     private Course findCourseById(Long id){
         return courseRepository.findById(id).orElseThrow(()->

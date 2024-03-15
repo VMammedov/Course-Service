@@ -16,7 +16,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
     Optional<Course> findCourseByIdAndCreatorEmail(Long id, String email);
 
-    @Query("SELECT COUNT(c) > 0 FROM Course c JOIN c.sections s JOIN c.creator u " +
+    @Query(value = "SELECT COUNT(c) > 0 FROM Course c JOIN c.sections s JOIN c.creator u " +
             "WHERE c.id = :courseId AND s.id = :sectionId AND u.email = :userEmail")
     boolean existsCourseAndSectionForUser(@Param("courseId") Long courseId,
                                           @Param("sectionId") Long sectionId,

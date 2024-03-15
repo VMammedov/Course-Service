@@ -10,6 +10,7 @@ import org.mapstruct.factory.Mappers;
 public interface CourseMapper {
     CourseMapper INSTANCE = Mappers.getMapper(CourseMapper.class);
 
+
     CreateCourseResponse courseToCreateCourseResponse(Course course);
 
     CourseResponse courseToCourseResponse(Course course);

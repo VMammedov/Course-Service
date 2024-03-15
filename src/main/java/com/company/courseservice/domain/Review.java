@@ -40,4 +40,6 @@ public class Review {
     @JoinColumn(name = "course_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Course course;
+
+
 }
