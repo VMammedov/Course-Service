@@ -48,15 +48,9 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public AuthResponse signIn(SignInRequest request) {
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-        } catch (LockedException ex) {
-            // todo User account is locked Exception handling
-        } catch (AuthenticationException ex) {
-            // todo Exception handling
-        }
+    public AuthResponse signIn(SignInRequest request) throws AuthenticationException{
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
         var user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));

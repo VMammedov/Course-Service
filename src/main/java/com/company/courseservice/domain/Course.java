@@ -23,6 +23,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "courses")
+@EqualsAndHashCode
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
@@ -18,6 +19,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Table(name = "reviews")
+@EqualsAndHashCode
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

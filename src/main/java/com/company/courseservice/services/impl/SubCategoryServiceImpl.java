@@ -8,6 +8,7 @@ import com.company.courseservice.repository.CategoryRepository;
 import com.company.courseservice.repository.SubCategoryRepository;
 import com.company.courseservice.request.SubCategory.CreateSubCategoryRequest;
 import com.company.courseservice.response.SubCategory.CreateSubCategoryResponse;
+import com.company.courseservice.response.SubCategory.SubCategoryBulkResponse;
 import com.company.courseservice.response.SubCategory.SubCategoryResponse;
 import com.company.courseservice.services.SubCategoryService;
 import lombok.RequiredArgsConstructor;
@@ -42,21 +43,24 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
     @Override
     public SubCategoryResponse getSubCategory(Long id) {
-        SubCategory subCategory = subCategoryRepository.findById(id)
+        SubCategory subCategory = subCategoryRepository.findSubCategoryById(id)
                 .orElseThrow(() -> new DataNotFoundException("SubCategory with " + id + " id not found!"));
 
         return SubCategoryMapper.INSTANCE.subCategoryToSubCategoryResponse(subCategory);
     }
 
     @Override
-    public List<SubCategoryResponse> getSubCategories() {
-        List<SubCategoryResponse> subCategoryResponseList;
-        List<SubCategory> subCategories = subCategoryRepository.findAll();
+    public SubCategoryBulkResponse getSubCategories(Long categoryId) {
+        SubCategoryBulkResponse subCategoryBulkResponse = new SubCategoryBulkResponse();
+        List<SubCategory> subCategories = subCategoryRepository.findSubCategoriesByCategory_Id(categoryId);
 
-        subCategoryResponseList = subCategories.stream()
-                .map(SubCategoryMapper.INSTANCE::subCategoryToSubCategoryResponse)
-                .collect(Collectors.toList());
+        subCategoryBulkResponse.setSubCategories(subCategories.stream()
+                .map(SubCategoryMapper.INSTANCE::subCategoryToSubCategoryDto)
+                .collect(Collectors.toList()));
 
-        return subCategoryResponseList;
+        subCategoryBulkResponse.setCount(subCategoryBulkResponse.getSubCategories() != null ? subCategories.size() : 0);
+        subCategoryBulkResponse.setCategoryId(categoryId);
+
+        return subCategoryBulkResponse;
     }
 }

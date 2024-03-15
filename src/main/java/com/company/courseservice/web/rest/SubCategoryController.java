@@ -1,10 +1,11 @@
 package com.company.courseservice.web.rest;
 
 import com.company.courseservice.request.SubCategory.CreateSubCategoryRequest;
-import com.company.courseservice.response.Category.CategoryResponse;
 import com.company.courseservice.response.SubCategory.CreateSubCategoryResponse;
+import com.company.courseservice.response.SubCategory.SubCategoryBulkResponse;
 import com.company.courseservice.response.SubCategory.SubCategoryResponse;
 import com.company.courseservice.services.SubCategoryService;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,9 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-
 
 @RestController
 @RequestMapping("/subcategory")
@@ -35,8 +33,8 @@ public class SubCategoryController {
         return subCategoryService.getSubCategory(id);
     }
 
-    @GetMapping("/getSubCategories")
-    public List<SubCategoryResponse> getSubCategories(){
-        return subCategoryService.getSubCategories();
+    @GetMapping("/getSubCategories/{categoryId}")
+    public SubCategoryBulkResponse getSubCategories(@PathVariable @NotNull Long categoryId){
+        return subCategoryService.getSubCategories(categoryId);
     }
 }

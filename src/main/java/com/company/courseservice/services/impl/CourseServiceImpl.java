@@ -4,6 +4,7 @@ import com.company.courseservice.domain.Course;
 import com.company.courseservice.domain.SubCategory;
 import com.company.courseservice.domain.User;
 import com.company.courseservice.exception.DataNotFoundException;
+import com.company.courseservice.exception.IllegalRequestException;
 import com.company.courseservice.mappers.CourseMapper;
 import com.company.courseservice.repository.CourseRepository;
 import com.company.courseservice.repository.SubCategoryRepository;
@@ -51,49 +52,46 @@ public class CourseServiceImpl implements CourseService {
                 .rating((byte)0)
                 .build();
 
-        course = courseRepository.save(course);
-
-        return CourseMapper.INSTANCE.courseToCreateCourseResponse(course);
+        return CourseMapper.INSTANCE.courseToCreateCourseResponse(courseRepository.save(course));
     }
 
     @Override
     public List<CourseResponse> getAllCourse() {
+        //todo pagination
         List<Course> courses= courseRepository.findAll();
         return courses.stream().map(CourseMapper.INSTANCE::courseToCourseResponse).collect(Collectors.toList());
     }
 
     @Override
     public CourseResponse updateCourseById(Long id, UpdateCourseRequest request) {
-        SubCategory subCategory = subCategoryRepository.findById(request.getSubCategoryId())
-                .orElseThrow(() -> new DataNotFoundException("SubCategory with " + request.getSubCategoryId() + " id not found!"));
 
-        User user = userRepository.findByEmail(AuthUtil.getCurrentUserEmail())
-                .orElseThrow(() -> new DataNotFoundException("User not found!"));
+        String currentUserEmail = AuthUtil.getCurrentUserEmail();
 
-        Course course = findCourseById(id);
+        Course course = courseRepository.findCourseByIdAndCreatorEmail(id, currentUserEmail)
+                .orElseThrow(() -> new IllegalRequestException("Course does not belong to the user!"));
 
-        Course updateCourse = Course.builder()
-                .id(course.getId())
-                .name(request.getName())
-                .description(request.getDescription())
-                .price(request.getPrice())
-                .haveCertificate(request.isHaveCertificate())
-                .enabled(true)
-                .creator(user)
-                .subCategory(subCategory)
-                .createdDate(new Date())
-                .rating((byte)0)
-                .build();
-        course = courseRepository.save(updateCourse);
-        return CourseMapper.INSTANCE.courseToCourseResponse(course);
+        SubCategory subCategory = subCategoryRepository.findSubCategoryById(request.getSubCategoryId())
+                .orElseThrow(() -> new IllegalRequestException("Sub category not found!"));
+
+        course.setName(request.getName());
+        course.setDescription(request.getDescription());
+        course.setPrice(request.getPrice());
+        course.setHaveCertificate(request.isHaveCertificate());
+        course.setSubCategory(subCategory);
+
+        return CourseMapper.INSTANCE.courseToCourseResponse(courseRepository.save(course));
     }
 
     @Override
-    @SneakyThrows
     public void deleteCourseById(Long id) {
-        Course course = findCourseById(id);
+
+        String currentUserEmail = AuthUtil.getCurrentUserEmail();
+        Course course = courseRepository.findCourseByIdAndCreatorEmail(id, currentUserEmail)
+                .orElseThrow(() -> new IllegalRequestException("Course does not belong to the user!"));
+
         if(!course.isEnabled())
-            throw new BadRequestException("Course already deleted!");
+            throw new IllegalRequestException("Course already deleted!");
+
         course.setEnabled(false);
         courseRepository.save(course);
     }
@@ -106,6 +104,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public List<CourseResponse> getCoursesByName(String name) {
+        //todo pagination
         List<CourseResponse> courseResponseList;
         List<Course> courseList = courseRepository.findAllByNameLike(name);
 

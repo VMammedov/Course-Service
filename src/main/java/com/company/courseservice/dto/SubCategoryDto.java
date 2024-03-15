@@ -1,4 +1,4 @@
-package com.company.courseservice.response.SubCategory;
+package com.company.courseservice.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SubCategoryResponse {
+public class SubCategoryDto {
+    private Long id;
     private String name;
-    private Long categoryId;
 }

@@ -1,5 +1,6 @@
 package com.company.courseservice.request.Lecture;
 
+import com.company.courseservice.dto.CreateBulkLectureDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateBulkLectureRequest {
-    private List<CreateLectureRequest> lectures;
+    private List<CreateBulkLectureDto> lectures;
     private Long courseId;
 }
