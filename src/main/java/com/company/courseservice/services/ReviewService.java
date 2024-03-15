@@ -4,6 +4,7 @@ import com.company.courseservice.request.Review.CreateReviewRequest;
 import com.company.courseservice.request.Review.UpdateReviewRequest;
 import com.company.courseservice.response.Review.CreateReviewResponse;
 import com.company.courseservice.response.Review.ReviewResponse;
+import com.company.courseservice.response.Review.UpdateReviewResponse;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ public interface ReviewService {
 
     List<ReviewResponse> getReviewsByCourseId(Long id);
 
-    ReviewResponse updateReviewById(Long id, UpdateReviewRequest request);
+    UpdateReviewResponse updateReviewById(Long id, UpdateReviewRequest request);
 
     void deleteReviewById(Long id);
 }

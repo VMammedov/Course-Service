@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class CreateSectionRequest {
     private String name;
     private Long courseId;
+    private Long orderNumber;
 }

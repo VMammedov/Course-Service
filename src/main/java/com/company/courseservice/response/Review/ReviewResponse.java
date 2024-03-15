@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 public class ReviewResponse {
     private String content;
     private byte rate;
-
     private Long userId;
     private Long courseId;
 }

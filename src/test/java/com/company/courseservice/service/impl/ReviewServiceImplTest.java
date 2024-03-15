@@ -6,14 +6,19 @@ import com.company.courseservice.domain.User;
 import com.company.courseservice.exception.IllegalRequestException;
 import com.company.courseservice.repository.ReviewRepository;
 import com.company.courseservice.request.Review.CreateReviewRequest;
+import com.company.courseservice.request.Review.UpdateReviewRequest;
 import com.company.courseservice.response.Review.CreateReviewResponse;
 import com.company.courseservice.response.Review.ReviewResponse;
+import com.company.courseservice.response.Review.UpdateReviewResponse;
 import com.company.courseservice.services.impl.ReviewServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import utils.AuthUtil;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class ReviewServiceImplTest {
@@ -38,7 +44,7 @@ public class ReviewServiceImplTest {
     }
 
     @Test
-    public void when_call_create_review_if_review_does_not_exist() {
+    public void when_call_create_review_given_correct_request_then_return_success() {
         // Arrange
         CreateReviewRequest request = new CreateReviewRequest();
         request.setCourseId(1L);
@@ -61,7 +67,7 @@ public class ReviewServiceImplTest {
     }
 
     @Test
-    public void when_call_create_review_if_review_already_exists() {
+    public void when_call_create_review_given_invalid_request_then_throws_illegal_request_exception() {
         // Arrange
         CreateReviewRequest request = new CreateReviewRequest();
         request.setCourseId(1L);
@@ -146,7 +152,42 @@ public class ReviewServiceImplTest {
     }
 
     @Test
-    public void updateReviewById() {
+    public void when_call_update_review_by_id_given_correct_id_then_return_success() {
+        //Arrange
+        String userEmail = "user@gmail.com";
+        Long id = 1L;
+
+        when(reviewRepository.findByIdAndUserEmail(id, userEmail)).thenReturn(Optional.of(new Review()));
+        when(reviewRepository.save(any(Review.class))).thenReturn(Review.builder().id(id).build());
+
+        MockedStatic<AuthUtil> authUtilMockedStatic = Mockito.mockStatic(AuthUtil.class);
+        authUtilMockedStatic.when(AuthUtil::getCurrentUserEmail).thenReturn(userEmail);
+
+        //Act
+        UpdateReviewResponse response = reviewService.updateReviewById(id, new UpdateReviewRequest());
+
+        //Assert
+        assertNotNull(response);
+        assertEquals(id, response.getId());
+        verify(reviewRepository).findByIdAndUserEmail(id, userEmail);
+        authUtilMockedStatic.close();
+    }
+
+    @Test
+    public void when_call_update_review_by_id_given_invalid_id_then_throws_illegal_request_exception() {
+        //Arrange
+        String userEmail = "user@gmail.com";
+        Long id = 1L;
+
+        when(reviewRepository.findByIdAndUserEmail(id, userEmail)).thenReturn(Optional.empty());
+
+        MockedStatic<AuthUtil> authUtilMockedStatic = Mockito.mockStatic(AuthUtil.class);
+        authUtilMockedStatic.when(AuthUtil::getCurrentUserEmail).thenReturn(userEmail);
+
+        //Act & Assert
+        assertThrows(IllegalRequestException.class, () -> reviewService.updateReviewById(id, new UpdateReviewRequest()));
+        verify(reviewRepository).findByIdAndUserEmail(id, userEmail);
+        authUtilMockedStatic.close();
     }
 
     @Test

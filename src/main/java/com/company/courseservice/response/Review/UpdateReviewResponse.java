@@ -1,4 +1,4 @@
-package com.company.courseservice.request.Review;
+package com.company.courseservice.response.Review;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,9 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateReviewRequest {
+public class UpdateReviewResponse {
+    private Long id;
     private String content;
     private byte rate;
-    private Long userId;
-    private Long courseId;
 }

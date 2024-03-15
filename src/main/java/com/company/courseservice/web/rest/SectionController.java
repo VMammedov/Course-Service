@@ -38,9 +38,9 @@ public class SectionController {
         return service.getSectionByName(name);
     }
 
-    @PutMapping("/updateSectionByCourseId/{courseId}/{id}")
-    public SectionResponse updateSectionByCourseId(@PathVariable("courseId") Long courseId,@PathVariable("id") Long id, @RequestBody UpdateSectionRequest request){
-        return service.updateSectionByCourseId(courseId,id,request);
+    @PutMapping("/updateSectionByCourseId/{id}")
+    public SectionResponse updateSectionByCourseId(@PathVariable("id") Long id, @RequestBody UpdateSectionRequest request){
+        return service.updateSectionByCourseId(id,request);
     }
 
     @DeleteMapping("deleteSectionById/{id}")

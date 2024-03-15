@@ -10,7 +10,7 @@ services:
       MYSQL_ROOT_PASSWORD: course_root_1517
       MYSQL_DATABASE: COURSE_SERVICE_DB
     ports:
-      - '3307:3306'
+      - '3306:3306'
     volumes:
       - dbCourse:/var/lib/mysql
     networks:
