@@ -1,8 +1,11 @@
 package com.company.courseservice.service.impl;
 
 import com.company.courseservice.domain.Appeal;
+import com.company.courseservice.exception.DataNotFoundException;
+import com.company.courseservice.exception.IllegalRequestException;
 import com.company.courseservice.repository.AppealRepository;
 import com.company.courseservice.request.Appeal.CreateAppealRequest;
+import com.company.courseservice.request.Review.UpdateReviewRequest;
 import com.company.courseservice.response.Appeal.AppealResponse;
 import com.company.courseservice.services.impl.AppealServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,10 +18,10 @@ import java.util.Optional;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class AppealServiceImplTest {
 
@@ -64,14 +67,11 @@ public class AppealServiceImplTest {
     }
 
     @Test
-    public void when_given_id_then_return_success() {
+    public void when_call_get_appeal_by_id_given_valid_id_then_return_success() {
         //Arrange
         Appeal existingAppeal = new Appeal();
         existingAppeal.setId(1L);
-        existingAppeal.setFullName("TestFullName");
-        existingAppeal.setEmail("test@gmail.com");
-        existingAppeal.setPhoneNumber("+test");
-        existingAppeal.setMessage("testMessage");
+
         when(appealRepository.findById(1L)).thenReturn(Optional.of(existingAppeal));
 
         //Act
@@ -79,6 +79,19 @@ public class AppealServiceImplTest {
 
         //Assert
         assertNotNull(response);
+    }
+
+    @Test
+    public void when_call_get_appeal_by_id_given_invalid_id_then_throws_data_not_found_exception(){
+        Long id = 1L;
+        //Arrange
+        Appeal existingAppeal = new Appeal();
+        existingAppeal.setId(id);
+        when(appealRepository.findById(1L)).thenReturn(Optional.empty());
+
+        //Act & Assert
+        assertThrows(DataNotFoundException.class, () -> appealService.getAppeal(id));
+        verify(appealRepository).findById(id);
     }
 
     @Test

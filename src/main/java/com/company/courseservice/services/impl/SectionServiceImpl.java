@@ -60,7 +60,7 @@ public class SectionServiceImpl implements SectionService {
     }
 
     @Override
-    public SectionResponse updateSectionByCourseId(Long id, UpdateSectionRequest request) {
+    public SectionResponse updateSectionById(Long id, UpdateSectionRequest request) {
         String userEmail = AuthUtil.getCurrentUserEmail();
 
         Section section = sectionRepository.findSectionByIdAndUserEmail(id, userEmail)

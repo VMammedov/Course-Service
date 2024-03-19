@@ -14,7 +14,7 @@ public interface SectionService {
 
     List<SectionResponse> getSectionByName(String name);
 
-    SectionResponse updateSectionByCourseId(Long id, UpdateSectionRequest request);
+    SectionResponse updateSectionById(Long id, UpdateSectionRequest request);
 
     CreatedSectionResponse getSectionById(Long id);
 

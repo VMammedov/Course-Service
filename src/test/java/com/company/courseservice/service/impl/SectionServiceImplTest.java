@@ -3,6 +3,7 @@ package com.company.courseservice.service.impl;
 import com.company.courseservice.domain.Course;
 import com.company.courseservice.domain.Section;
 import com.company.courseservice.exception.DataNotFoundException;
+import com.company.courseservice.exception.IllegalRequestException;
 import com.company.courseservice.repository.CourseRepository;
 import com.company.courseservice.repository.SectionRepository;
 import com.company.courseservice.request.Section.CreateSectionRequest;
@@ -12,9 +13,8 @@ import com.company.courseservice.response.Section.SectionResponse;
 import com.company.courseservice.services.impl.SectionServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
+import utils.AuthUtil;
 
 import java.util.Arrays;
 import java.util.List;
@@ -42,45 +42,52 @@ public class SectionServiceImplTest {
         MockitoAnnotations.openMocks(this);
     }
 
-//    @Test
-//    public void when_call_create_section_is_valid_course_id() {
-//        // Arrange
-//        CreateSectionRequest request = new CreateSectionRequest();
-//        request.setCourseId(1L);
-//        request.setName("Section Name");
-//
-//        Course mockCourse = new Course();
-//        mockCourse.setId(1L);
-//        Section section = new Section();
-//        section.setCourse(mockCourse);
-//        section.setName("Section Name");
-//        when(courseRepository.findById(request.getCourseId())).thenReturn(Optional.of(mockCourse));
-//        when(sectionRepository.save(any(Section.class))).thenReturn(section);
-//        // Act
-//        CreatedSectionResponse response = sectionService.createSection(request);
-//
-//        // Assert
-//        assertNotNull(response);
-//
-//
-//    }
-//
-//    @Test
-//    public void when_call_create_section_is_invalid_course_id() {
-//        // Arrange
-//        CreateSectionRequest request = new CreateSectionRequest();
-//        request.setCourseId(1L);
-//        request.setName("Section Name");
-//
-//        when(courseRepository.findById(request.getCourseId())).thenReturn(Optional.empty());
-//
-//        // Act & Assert
-//        assertThrows(DataNotFoundException.class, () -> sectionService.createSection(request));
-//
-//    }
+    @Test
+    public void when_call_create_section_given_valid_course_id_then_return_success() {
+        Long courseId = 1L;
+        Long id = 1L;
+        String userEmail = "test@gmail.com";
+
+        //Arrange
+        CreateSectionRequest request = CreateSectionRequest.builder()
+                .courseId(courseId)
+                .name("Section name").build();
+        Section savedSection = Section.builder()
+                .id(id)
+                .name("Section name").build();
+        when(courseRepository.findCourseByIdAndCreatorEmail(courseId, userEmail)).thenReturn(Optional.of(new Course()));
+        when(sectionRepository.save(any(Section.class))).thenReturn(savedSection);
+        MockedStatic<AuthUtil> authUtilMockedStatic = Mockito.mockStatic(AuthUtil.class);
+        authUtilMockedStatic.when(AuthUtil::getCurrentUserEmail).thenReturn(userEmail);
+        //Act
+        CreatedSectionResponse response = sectionService.createSection(request);
+        //Assert
+        assertNotNull(response);
+        assertEquals(id,response.getId());
+        authUtilMockedStatic.close();
+    }
 
     @Test
-    public void when_call_get_all_section_by_course_id() {
+    public void when_call_create_section_given_invalid_course_id_then_throws_illegal_request_exception() {
+        Long courseId = 1L;
+        String userEmail = "test@gmail.com";
+        // Arrange
+        CreateSectionRequest request = new CreateSectionRequest();
+        request.setCourseId(1L);
+        request.setName("Section Name");
+
+        MockedStatic<AuthUtil> authUtilMockedStatic = Mockito.mockStatic(AuthUtil.class);
+        authUtilMockedStatic.when(AuthUtil::getCurrentUserEmail).thenReturn(userEmail);
+        when(courseRepository.findCourseByIdAndCreatorEmail(courseId,userEmail)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(IllegalRequestException.class, () -> sectionService.createSection(request));
+        authUtilMockedStatic.close();
+
+    }
+
+    @Test
+    public void when_call_get_all_section_by_course_id_given_valid_course_id_then_return_success() {
         // Arrange
         Long courseId = 123L;
 
@@ -103,7 +110,7 @@ public class SectionServiceImplTest {
     }
 
     @Test
-    public void when_call_get_all_section_by_course_id_with_invalid_course_id() {
+    public void when_call_get_all_section_by_course_id_given_invalid_course_id_then_throws_data_not_found_exception() {
         // Arrange
         Long courseId = 123L;
 
@@ -114,7 +121,7 @@ public class SectionServiceImplTest {
     }
 
     @Test
-    public void getSectionByName() {
+    public void when_call_get_section_by_name_given_valid_name_then_return_success() {
         // Arrange
         String sectionName = "Section";
 
@@ -132,58 +139,49 @@ public class SectionServiceImplTest {
         assertEquals(mockSections.size(), responseList.size());
     }
 
-//    @Test
-//    public void when_call_update_section_by_course_id() {
-//        // Arrange
-//        Long courseId = 123L;
-//        Long sectionId = 456L;
-//
-//        UpdateSectionRequest request = new UpdateSectionRequest();
-//        request.setName("Updated Section Name");
-//
-//        Course course = new Course();
-//        course.setId(courseId);
-//
-//        Section section = new Section();
-//        section.setName("Test Section");
-//        section.setCourse(course);
-//        section.setId(sectionId);
-//
-//        Section updateSection = new Section();
-//        updateSection.setId(section.getId());
-//        updateSection.setName(request.getName());
-//        updateSection.setCourse(section.getCourse());
-//
-//        when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
-//        when(sectionRepository.findByCourseAndId(course, sectionId)).thenReturn(section);
-//        when(sectionRepository.save(any(Section.class))).thenReturn(updateSection);
-//
-//        // Act
-//        SectionResponse response = sectionService.updateSectionByCourseId(courseId, sectionId, request);
-//
-//        // Assert
-//        assertNotNull(response);
-//        assertEquals(request.getName(), response.getName());
-//    }
-//
-//    @Test
-//    public void when_call_update_section_by_course_id_with_invalid_course_id() {
-//        // Arrange
-//        Long courseId = 123L;
-//        Long sectionId = 456L;
-//
-//        UpdateSectionRequest request = new UpdateSectionRequest();
-//        request.setName("Updated Section Name");
-//
-//        when(courseRepository.findById(courseId)).thenReturn(Optional.empty());
-//
-//        // Act & Assert
-//        assertThrows(DataNotFoundException.class, () -> sectionService.updateSectionByCourseId(courseId, sectionId, request));
-//
-//    }
+    @Test
+    public void when_call_update_section_by_id_given_valid_id_then_return_success() {
+        // Arrange
+        Long sectionId = 456L;
+        String userEmail = "test@gmail.com";
+        UpdateSectionRequest request = new UpdateSectionRequest();
+        request.setName("Updated Section Name");
+        Section savedSection = Section.builder().id(sectionId).name("Updated Section Name").build();
+
+        MockedStatic<AuthUtil> authUtilMockedStatic = Mockito.mockStatic(AuthUtil.class);
+        authUtilMockedStatic.when(AuthUtil::getCurrentUserEmail).thenReturn(userEmail);
+
+        when(sectionRepository.findSectionByIdAndUserEmail(sectionId,userEmail)).thenReturn(Optional.of(savedSection));
+        when(sectionRepository.save(savedSection)).thenReturn(savedSection);
+
+        //Act
+        SectionResponse response = sectionService.updateSectionById(sectionId,request);
+        //Assert
+        assertNotNull(response);
+        authUtilMockedStatic.close();
+
+
+    }
 
     @Test
-    public void when_call_get_section_by_id() {
+    public void when_call_update_section_by_id_given_invalid_id_then_throws_data_not_found_exception() {
+        // Arrange
+        Long sectionId = 456L;
+        String userEmail = "test@gmail.com";
+        UpdateSectionRequest request = new UpdateSectionRequest();
+        request.setName("Updated Section Name");
+        MockedStatic<AuthUtil> authUtilMockedStatic = Mockito.mockStatic(AuthUtil.class);
+        authUtilMockedStatic.when(AuthUtil::getCurrentUserEmail).thenReturn(userEmail);
+
+        when(sectionRepository.findSectionByIdAndUserEmail(sectionId,userEmail)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(IllegalRequestException.class, () -> sectionService.updateSectionById(sectionId, request));
+        authUtilMockedStatic.close();
+    }
+
+    @Test
+    public void when_call_get_section_by_id_given_valid_id_then_return_success() {
         // Arrange
         Long sectionId = 123L;
 
@@ -201,7 +199,7 @@ public class SectionServiceImplTest {
     }
 
     @Test
-    public void when_call_get_section_by_id_not_found() {
+    public void when_call_get_section_by_id_given_invalid_id_then_throws_data_not_found_exception() {
         // Arrange
         Long sectionId = 123L;
 
@@ -211,28 +209,36 @@ public class SectionServiceImplTest {
         assertThrows(DataNotFoundException.class, () -> sectionService.getSectionById(sectionId));
     }
 
-//    @Test
-//    public void when_delete_section_by_id() {
-//        // Arrange
-//        Long sectionId = 123L;
-//
-//        Section mockSection = new Section();
-//        mockSection.setId(sectionId);
-//
-//        when(sectionRepository.findById(sectionId)).thenReturn(Optional.of(mockSection));
-//
-//        // Act
-//        sectionService.deleteSectionById(sectionId);
-//    }
-//
-//    @Test
-//    public void when_delete_section_by_id_not_found() {
-//        // Arrange
-//        Long sectionId = 123L;
-//
-//        when(sectionRepository.findById(sectionId)).thenReturn(Optional.empty());
-//
-//        // Act & Assert
-//        assertThrows(DataNotFoundException.class, () -> sectionService.deleteSectionById(sectionId));
-//    }
+    @Test
+    public void when_delete_section_by_id_given_valid_id_then_return_success() {
+        // Arrange
+        Long sectionId = 123L;
+        String userEmail = "test@gmail.com";
+        Section mockSection = new Section();
+        mockSection.setId(sectionId);
+
+        MockedStatic<AuthUtil> authUtilMockedStatic = Mockito.mockStatic(AuthUtil.class);
+        authUtilMockedStatic.when(AuthUtil::getCurrentUserEmail).thenReturn(userEmail);
+
+        when(sectionRepository.findSectionByIdAndUserEmail(sectionId,userEmail)).thenReturn(Optional.of(mockSection));
+
+        // Act
+        sectionService.deleteSectionById(sectionId);
+        authUtilMockedStatic.close();
+    }
+
+    @Test
+    public void when_delete_section_by_id_given_invalid_id_then_throws_illegal_request_exception() {
+        // Arrange
+        Long sectionId = 123L;
+        String userEmail = "test@gmail.com";
+        MockedStatic<AuthUtil> authUtilMockedStatic = Mockito.mockStatic(AuthUtil.class);
+        authUtilMockedStatic.when(AuthUtil::getCurrentUserEmail).thenReturn(userEmail);
+
+        when(sectionRepository.findSectionByIdAndUserEmail(sectionId,userEmail)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(IllegalRequestException.class, () -> sectionService.deleteSectionById(sectionId));
+        authUtilMockedStatic.close();
+    }
 }

@@ -93,7 +93,7 @@ public class ReviewServiceImplTest {
     }
 
     @Test
-    public void when_given_id_then_return_success() {
+    public void when_call_get_review_by_id_given_valid_id_then_return_success() {
         //Arrange
         Review existingReview = new Review();
         existingReview.setId(1L);
@@ -106,7 +106,7 @@ public class ReviewServiceImplTest {
     }
 
     @Test
-    public void when_given_user_id_then_return_success() {
+    public void when_call_get_review_by_user_id_given_valid_user_id_then_return_success() {
         // Arrange
         Long userId = 123L;
         User user = new User();
@@ -129,7 +129,7 @@ public class ReviewServiceImplTest {
     }
 
     @Test
-    public void when_given_course_id_then_return_success() {
+    public void when_call_get_review_by_course_id_given_valid_course_id_then_return_success() {
         // Arrange
         Long courseId = 123L;
         Course course = new Course();
@@ -191,6 +191,39 @@ public class ReviewServiceImplTest {
     }
 
     @Test
-    public void deleteReviewById() {
+    public void when_call_delete_review_by_id_given_correct_id_then_return_success() {
+        //Arrange
+        String userEmail = "user@gmail.com";
+        Long id = 1L;
+
+        when(reviewRepository.findByIdAndUserEmail(id, userEmail)).thenReturn(Optional.of(new Review()));
+
+        MockedStatic<AuthUtil> authUtilMockedStatic = Mockito.mockStatic(AuthUtil.class);
+        authUtilMockedStatic.when(AuthUtil::getCurrentUserEmail).thenReturn(userEmail);
+        //Act
+        reviewService.deleteReviewById(id);
+
+        //Assert
+        verify(reviewRepository).findByIdAndUserEmail(id, userEmail);
+        authUtilMockedStatic.close();
+
+    }
+
+    @Test
+    public void when_call_delete_review_by_id_given_invalid_id_then_throws_illegal_request_exception() {
+        //Arrange
+        String userEmail = "user@gmail.com";
+        Long id = 1L;
+
+        when(reviewRepository.findByIdAndUserEmail(id, userEmail)).thenReturn(Optional.empty());
+
+        MockedStatic<AuthUtil> authUtilMockedStatic = Mockito.mockStatic(AuthUtil.class);
+        authUtilMockedStatic.when(AuthUtil::getCurrentUserEmail).thenReturn(userEmail);
+
+        //Act & Assert
+        assertThrows(IllegalRequestException.class, () -> reviewService.deleteReviewById(id));
+        verify(reviewRepository).findByIdAndUserEmail(id, userEmail);
+        authUtilMockedStatic.close();
+
     }
 }
