@@ -40,7 +40,7 @@ public class SectionController {
 
     @PutMapping("/updateSectionByCourseId/{id}")
     public SectionResponse updateSectionByCourseId(@PathVariable("id") Long id, @RequestBody UpdateSectionRequest request){
-        return service.updateSectionByCourseId(id,request);
+        return service.updateSectionById(id,request);
     }
 
     @DeleteMapping("deleteSectionById/{id}")

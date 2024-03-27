@@ -24,6 +24,7 @@ public interface ReviewMapper {
 
     ReviewResponse reviewToReviewResponse(Review review);
 
+
     UpdateReviewResponse reviewToUpdateReviewResponse(Review review);
 
 }
