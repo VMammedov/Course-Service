@@ -15,8 +15,6 @@ import com.company.courseservice.response.Course.CourseResponse;
 import com.company.courseservice.response.Course.CreateCourseResponse;
 import com.company.courseservice.services.CourseService;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 import utils.AuthUtil;
 
@@ -52,58 +50,47 @@ public class CourseServiceImpl implements CourseService {
                 .rating((byte) 0)
                 .build();
 
-        course = courseRepository.save(course);
-
-        return CourseMapper.INSTANCE.courseToCreateCourseResponse(course);
+        return CourseMapper.INSTANCE.courseToCreateCourseResponse(courseRepository.save(course));
     }
 
     @Override
     public List<CourseResponse> getAllCourse() {
+        //todo pagination
         List<Course> courses= courseRepository.findAll();
         return courses.stream().map(CourseMapper.INSTANCE::courseToCourseResponse).collect(Collectors.toList());
     }
 
     @Override
     public CourseResponse updateCourseById(Long id, UpdateCourseRequest request) {
-        SubCategory subCategory = subCategoryRepository.findById(request.getSubCategoryId())
-                .orElseThrow(() -> new DataNotFoundException("SubCategory with " + request.getSubCategoryId() + " id not found!"));
 
-        User user = userRepository.findByEmail(AuthUtil.getCurrentUserEmail())
-                .orElseThrow(() -> new DataNotFoundException("User not found!"));
-        boolean isValidCourseForUser = courseRepository.existsCourseForUser(id,AuthUtil.getCurrentUserEmail());
-        if(isValidCourseForUser){
-            Course course = findCourseById(id);
-            course.setName(request.getName());
-            course.setDescription(request.getDescription());
-            course.setPrice(request.getPrice());
-            course.setHaveCertificate(request.isHaveCertificate());
-            course.setSubCategory(subCategory);
-            return CourseMapper.INSTANCE.courseToCourseResponse(course);
-        }else{
-            throw new IllegalRequestException("This Course " +
-                    id +
-                    " not exist " + user);
-        }
+        String currentUserEmail = AuthUtil.getCurrentUserEmail();
 
+        Course course = courseRepository.findCourseByIdAndCreatorEmail(id, currentUserEmail)
+                .orElseThrow(() -> new IllegalRequestException("Course does not belong to the user!"));
+
+        SubCategory subCategory = subCategoryRepository.findSubCategoryById(request.getSubCategoryId())
+                .orElseThrow(() -> new IllegalRequestException("Sub category not found!"));
+
+        course.setName(request.getName());
+        course.setDescription(request.getDescription());
+        course.setPrice(request.getPrice());
+        course.setHaveCertificate(request.isHaveCertificate());
+        course.setSubCategory(subCategory);
+
+        return CourseMapper.INSTANCE.courseToCourseResponse(courseRepository.save(course));
     }
 
     @Override
-    @SneakyThrows
     public void deleteCourseById(Long id) {
-        String userEmail = AuthUtil.getCurrentUserEmail();
-        boolean isValidCourseForUser = courseRepository.existsCourseForUser(id,userEmail);
-        if(isValidCourseForUser){
-            Course course = findCourseById(id);
-            if (!course.isEnabled())
-                throw new BadRequestException("Course already deleted!");
-            course.setEnabled(false);
-            courseRepository.save(course);
-        }else{
-            throw new IllegalRequestException("This Course " +
-                    id +
-                    " not exist " + userEmail);
-        }
+        String currentUserEmail = AuthUtil.getCurrentUserEmail();
+        Course course = courseRepository.findCourseByIdAndCreatorEmail(id, currentUserEmail)
+                .orElseThrow(() -> new IllegalRequestException("Course does not belong to the user!"));
 
+        if(!course.isEnabled())
+            throw new IllegalRequestException("Course already deleted!");
+
+        course.setEnabled(false);
+        courseRepository.save(course);
     }
 
     @Override
@@ -114,6 +101,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public List<CourseResponse> getCoursesByName(String name) {
+        //todo pagination
         List<CourseResponse> courseResponseList;
         List<Course> courseList = courseRepository.findAllByNameLike(name);
 

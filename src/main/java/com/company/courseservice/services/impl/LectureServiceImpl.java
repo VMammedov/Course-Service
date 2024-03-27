@@ -1,6 +1,7 @@
 package com.company.courseservice.services.impl;
 
 import com.company.courseservice.domain.Lecture;
+import com.company.courseservice.dto.CreateBulkLectureDto;
 import com.company.courseservice.exception.DataNotFoundException;
 import com.company.courseservice.exception.IllegalRequestException;
 import com.company.courseservice.mappers.LectureMapper;
@@ -69,7 +70,7 @@ public class LectureServiceImpl implements LectureService {
             throw new IllegalRequestException("Course does not belong to the user!");
         }
 
-        for (CreateLectureRequest item : request.getLectures()) {
+        for (CreateBulkLectureDto item : request.getLectures()) {
             Long sectionId = item.getSectionId();
 
             if (!sectionIds.contains(sectionId)) {
@@ -79,17 +80,13 @@ public class LectureServiceImpl implements LectureService {
                     throw new IllegalRequestException("Section does not belong to the course!");
                 }
             }
-            item.setCourseId(courseId);
-            lectures.add(LectureMapper.INSTANCE.createLectureRequestToLecture(item));
+            lectures.add(LectureMapper.INSTANCE.createBulkLectureDtoToLecture(item, courseId));
         }
         List<Lecture> savedLectures = lectureRepository.saveAll(lectures);
 
         List<CreateLectureResponse> lectureResponses = savedLectures.stream().map(LectureMapper.INSTANCE :: lectureToCreateLectureResponse).collect(Collectors.toList());
 
-        return CreateBulkLectureResponse.builder()
-                .lectures(lectureResponses)
-                .courseId(courseId)
-                .build();
+        return CreateBulkLectureResponse.builder().lectures(lectureResponses).courseId(courseId).build();
     }
 
     @Override
@@ -125,9 +122,7 @@ public class LectureServiceImpl implements LectureService {
         lecture.setUrl(request.getUrl());
         lecture.setDurationBySeconds(request.getDurationBySeconds());
 
-        lectureRepository.save(lecture);
-
-        return LectureMapper.INSTANCE.lectureToLectureResponse(lecture);
+        return LectureMapper.INSTANCE.lectureToLectureResponse(lectureRepository.save(lecture));
     }
 
     @Override

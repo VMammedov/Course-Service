@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateLectureDto {
+public class CreateBulkLectureDto {
     private String name;
     private String url;
     private Long durationBySeconds;
-    private Integer order;
+    private Integer orderNumber;
     private Long sectionId;
 }

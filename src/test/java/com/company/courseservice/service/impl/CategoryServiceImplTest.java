@@ -1,9 +1,7 @@
 package com.company.courseservice.service.impl;
 
 import com.company.courseservice.domain.Category;
-import com.company.courseservice.dto.CategoryDto;
 import com.company.courseservice.exception.DataNotFoundException;
-import com.company.courseservice.mappers.CategoryMapper;
 import com.company.courseservice.repository.CategoryRepository;
 import com.company.courseservice.request.Category.CreateCategoryRequest;
 import com.company.courseservice.response.Category.CategoryResponse;
@@ -12,9 +10,11 @@ import com.company.courseservice.response.Category.CreateCategoryResponse;
 import com.company.courseservice.services.impl.CategoryServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,12 +26,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 public class CategoryServiceImplTest {
     @Mock
     private CategoryRepository categoryRepository;
-
-    @Mock
-    private CategoryMapper categoryMapper;
 
     @InjectMocks
     private CategoryServiceImpl categoryService;
@@ -68,7 +66,6 @@ public class CategoryServiceImplTest {
         existingCategory.setId(categoryId);
         existingCategory.setName("TestCategory");
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(existingCategory));
-        when(categoryMapper.categoryToCategoryResponse(existingCategory)).thenReturn(new CategoryResponse());
 
         // Act
         CategoryResponse response = categoryService.getCategory(categoryId);
@@ -92,7 +89,6 @@ public class CategoryServiceImplTest {
         // Arrange
         List<Category> categories = Arrays.asList(new Category(), new Category());
         when(categoryRepository.findAllWithoutSubCategories()).thenReturn(categories);
-        when(categoryMapper.categoryToCategoryResponse(any(Category.class))).thenReturn(new CategoryResponse());
 
         // Act
         List<CategoryResponse> response = categoryService.getCategories();
@@ -108,7 +104,6 @@ public class CategoryServiceImplTest {
         List<Category> categories = Arrays.asList(new Category(), new Category());
         Integer count = categories.size();
         when(categoryRepository.findAll()).thenReturn(categories);
-        when(categoryMapper.categoryToCategoryDto(any(Category.class))).thenReturn(new CategoryDto());
 
         // Act
         CategoryWithSubCategoriesResponse response = categoryService.getCategoriesWithSubCategories();

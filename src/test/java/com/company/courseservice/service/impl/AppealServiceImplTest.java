@@ -73,13 +73,13 @@ public class AppealServiceImplTest {
         existingAppeal.setPhoneNumber("+test");
         existingAppeal.setMessage("testMessage");
         when(appealRepository.findById(1L)).thenReturn(Optional.of(existingAppeal));
+
         //Act
         AppealResponse response = appealService.getAppeal(1L);
 
         //Assert
         assertNotNull(response);
     }
-
 
     @Test
     public void when_call_get_all_appeal_then_return_success() {

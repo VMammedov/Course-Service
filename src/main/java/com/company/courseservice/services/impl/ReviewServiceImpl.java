@@ -9,9 +9,11 @@ import com.company.courseservice.request.Review.CreateReviewRequest;
 import com.company.courseservice.request.Review.UpdateReviewRequest;
 import com.company.courseservice.response.Review.CreateReviewResponse;
 import com.company.courseservice.response.Review.ReviewResponse;
+import com.company.courseservice.response.Review.UpdateReviewResponse;
 import com.company.courseservice.services.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import utils.AuthUtil;
 
 import java.util.List;
@@ -67,27 +69,26 @@ public class ReviewServiceImpl implements ReviewService {
 
 
     @Override
-    public ReviewResponse updateReviewById(Long id, UpdateReviewRequest request) {
+    @Transactional
+    public UpdateReviewResponse updateReviewById(Long id, UpdateReviewRequest request) {
         String userEmail = AuthUtil.getCurrentUserEmail();
 
-        Review review = reviewRepository.findByIdAndUserEmail(id, userEmail);
+        Review review = reviewRepository.findByIdAndUserEmail(id, userEmail)
+                .orElseThrow(() -> new IllegalRequestException("Review doesn't belong to this User!"));
         review.setRate(request.getRate());
         review.setContent(request.getContent());
-        return ReviewMapper.INSTANCE.reviewToReviewResponse(review);
+
+        return ReviewMapper.INSTANCE.reviewToUpdateReviewResponse(reviewRepository.save(review));
     }
 
     @Override
+    @Transactional
     public void deleteReviewById(Long id) {
-        boolean isValidUserForDeleteReview =
-                reviewRepository.existsReviewsByUserEmail(AuthUtil.getCurrentUserEmail());
+        String userEmail = AuthUtil.getCurrentUserEmail();
 
-        if (isValidUserForDeleteReview) {
-            Review review = reviewRepository.findById(id)
-                    .orElseThrow(() -> new DataNotFoundException("Review not found by " + id + " id"));
-            reviewRepository.delete(review);
-        } else {
-            throw new IllegalRequestException("Review is not from this User"
-                    + AuthUtil.getCurrentUserEmail());
-        }
+        Review review = reviewRepository.findByIdAndUserEmail(id, userEmail)
+                .orElseThrow(() -> new IllegalRequestException("Review doesn't belong to this User!"));
+
+        reviewRepository.delete(review);
     }
 }

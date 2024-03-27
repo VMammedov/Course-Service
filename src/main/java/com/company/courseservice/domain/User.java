@@ -11,6 +11,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Table(name = "users")
 @ToString(exclude = "authorities")
+@EqualsAndHashCode(exclude = {"id","accountNonExpired","accountNonLocked","credentialsNonExpired","enabled","authorities"})
 public class User implements UserDetails {
 
     @Id

@@ -1,4 +1,4 @@
-package com.company.courseservice.request.Section;
+package com.company.courseservice.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateSectionRequest {
+public class SubCategoryDto {
+    private Long id;
     private String name;
-    private Long courseId;
-    private Long orderNumber;
 }

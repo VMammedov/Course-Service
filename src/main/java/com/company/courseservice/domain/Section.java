@@ -8,6 +8,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.hibernate.annotations.OnDelete;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "sections")
+@EqualsAndHashCode
 public class Section {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

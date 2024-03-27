@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -23,8 +24,9 @@ public class AppealServiceImpl implements AppealService {
 
     @Override
     public AppealResponse sentAppeal(CreateAppealRequest request) {
+
         Appeal appeal = appealRepository.save(AppealMapper.INSTANCE.createAppealRequestToAppeal(request));
-        return AppealMapper.INSTANCE.appealToAppealResponse(appeal);
+        return AppealMapper.INSTANCE.appealToAppealResponse(appealRepository.save(appeal));
     }
 
     @Override
@@ -38,15 +40,17 @@ public class AppealServiceImpl implements AppealService {
     public List<AppealResponse> getAppealsByEmail(String email) {
 
         List<Appeal> appeals = appealRepository.findAllByEmail(email);
-
         return appeals.stream().map(AppealMapper.INSTANCE::appealToAppealResponse).collect(Collectors.toList());
     }
 
     @Override
     public AppealResponse getAppeal(Long id) {
 
-        Appeal appeal = appealRepository.findById(id)
-                .orElseThrow(()-> new DataNotFoundException("Appeal not found by "+id+" id"));
-        return AppealMapper.INSTANCE.appealToAppealResponse(appeal);
+        Optional<Appeal> appeal = appealRepository.findById(id);
+
+        if(appeal.isEmpty())
+            throw new DataNotFoundException("Appeal not found by "+id+" id"); // todo Test excetion
+
+        return AppealMapper.INSTANCE.appealToAppealResponse(appeal.get());
     }
 }

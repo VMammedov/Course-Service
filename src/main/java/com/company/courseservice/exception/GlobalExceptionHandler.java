@@ -2,6 +2,7 @@ package com.company.courseservice.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
+import org.apache.tomcat.websocket.AuthenticationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -53,5 +54,15 @@ public class GlobalExceptionHandler {
                         exception.getMessage(),
                         request.getDescription(false))
                 ,HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<?> authenticationExceptionHandling(AuthenticationException exception, WebRequest request) {
+        return new ResponseEntity<>(
+                new ErrorResponse(HttpStatus.FORBIDDEN.value(),
+                        new Date(),
+                        exception.getMessage(),
+                        request.getDescription(false))
+                ,HttpStatus.FORBIDDEN);
     }
 }

@@ -4,6 +4,7 @@ import com.company.courseservice.request.Review.CreateReviewRequest;
 import com.company.courseservice.request.Review.UpdateReviewRequest;
 import com.company.courseservice.response.Review.CreateReviewResponse;
 import com.company.courseservice.response.Review.ReviewResponse;
+import com.company.courseservice.response.Review.UpdateReviewResponse;
 import com.company.courseservice.services.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -44,7 +45,7 @@ public class ReviewController {
     }
 
     @PutMapping("/updateReviewById/{id}")
-    public ReviewResponse updateReviewById(@PathVariable("id") Long id, @RequestBody UpdateReviewRequest request){
+    public UpdateReviewResponse updateReviewById(@PathVariable("id") Long id, @RequestBody UpdateReviewRequest request){
         return service.updateReviewById(id,request);
     }
 
