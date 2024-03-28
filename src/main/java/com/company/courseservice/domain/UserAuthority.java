@@ -19,7 +19,6 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @Table(name = "authorities")
-@EqualsAndHashCode
 public class UserAuthority implements GrantedAuthority {
 
     @Id

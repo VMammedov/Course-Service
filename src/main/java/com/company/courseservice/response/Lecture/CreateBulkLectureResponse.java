@@ -1,6 +1,5 @@
 package com.company.courseservice.response.Lecture;
 
-import com.company.courseservice.request.Lecture.CreateLectureRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

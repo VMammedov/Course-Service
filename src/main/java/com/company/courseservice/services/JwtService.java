@@ -1,6 +1,5 @@
 package com.company.courseservice.services;
 
-import com.company.courseservice.domain.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public interface JwtService {

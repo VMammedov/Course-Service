@@ -13,8 +13,9 @@ public interface AppealMapper {
     AppealMapper INSTANCE = Mappers.getMapper(AppealMapper.class);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "date", ignore = true)
+    @Mapping(target = "sentDate", ignore = true)
     Appeal createAppealRequestToAppeal(CreateAppealRequest request);
+
     AppealResponse appealToAppealResponse(Appeal appeal);
 
 }

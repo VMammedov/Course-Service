@@ -13,7 +13,6 @@ import com.company.courseservice.response.Section.CreatedSectionResponse;
 import com.company.courseservice.response.Section.SectionResponse;
 import com.company.courseservice.services.SectionService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import utils.AuthUtil;
 

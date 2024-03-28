@@ -8,5 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface UserAuthorityRepository extends JpaRepository<UserAuthority, Long> {
+
     Optional<UserAuthority> findByAuthority(String auhority);
 }
