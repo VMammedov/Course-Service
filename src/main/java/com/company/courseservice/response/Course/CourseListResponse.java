@@ -1,4 +1,4 @@
-package com.company.courseservice.response.Appeal;
+package com.company.courseservice.response.Course;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AppealListResponse {
-    private List<AppealResponse> items;
+public class CourseListResponse {
+    private List<CourseResponse> items;
     private PaginationInfo paginationInfo;
 }

@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import utils.AuthUtil;
 
 @Slf4j
 @Service
@@ -29,10 +28,5 @@ public class UserServiceImpl implements UserService {
         if(id != 0)
             return id;
         throw new DataNotFoundException("User with " + email + " email not found!");
-    }
-
-    @Override
-    public Long findAuthenticatedUserIdByUserEmail() {
-        return findUserIdByUserEmail(AuthUtil.getCurrentUserEmail());
     }
 }

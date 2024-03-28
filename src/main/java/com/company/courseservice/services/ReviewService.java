@@ -3,21 +3,21 @@ package com.company.courseservice.services;
 import com.company.courseservice.request.Review.CreateReviewRequest;
 import com.company.courseservice.request.Review.UpdateReviewRequest;
 import com.company.courseservice.response.Review.CreateReviewResponse;
+import com.company.courseservice.response.Review.ReviewListResponse;
 import com.company.courseservice.response.Review.ReviewResponse;
 import com.company.courseservice.response.Review.UpdateReviewResponse;
-
-import java.util.List;
+import org.springframework.data.domain.Pageable;
 
 public interface ReviewService {
     CreateReviewResponse createReview(CreateReviewRequest request);
 
-    List<ReviewResponse> getAllReviews();
+    ReviewListResponse getAllReviews(Pageable pageable);
 
     ReviewResponse getReviewById(Long id);
 
-    List<ReviewResponse> getReviewsByUserId(Long id);
+    ReviewListResponse getReviewsByUserId(Long id, Pageable pageable);
 
-    List<ReviewResponse> getReviewsByCourseId(Long id);
+    ReviewListResponse getReviewsByCourseId(Long id, Pageable pageable);
 
     UpdateReviewResponse updateReviewById(Long id, UpdateReviewRequest request);
 

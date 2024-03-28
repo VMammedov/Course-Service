@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReviewResponse {
+
+    private Long id;
     private String content;
     private byte rate;
     private Long userId;
