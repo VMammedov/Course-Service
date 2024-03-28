@@ -5,11 +5,17 @@ import com.company.courseservice.exception.DataNotFoundException;
 import com.company.courseservice.mappers.AppealMapper;
 import com.company.courseservice.repository.AppealRepository;
 import com.company.courseservice.request.Appeal.CreateAppealRequest;
+import com.company.courseservice.response.Appeal.AppealListResponse;
 import com.company.courseservice.response.Appeal.AppealResponse;
 import com.company.courseservice.services.AppealService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+
+import org.springframework.data.domain.Pageable;
+import utils.PaginationInfo;
+import utils.PaginationUtil;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,17 +36,23 @@ public class AppealServiceImpl implements AppealService {
     }
 
     @Override
-    public List<AppealResponse> getAllAppeals() {
+    public AppealListResponse getAllAppeals(Pageable pageable) {
 
-        List<Appeal> appeals = appealRepository.findAll();
-        return appeals.stream().map(AppealMapper.INSTANCE::appealToAppealResponse).collect(Collectors.toList());
+        AppealListResponse response = AppealListResponse.builder().build();
+        Page<Appeal> appeals = appealRepository.findAll(pageable);
+        response.setItems(appeals.getContent().stream().map(AppealMapper.INSTANCE::appealToAppealResponse).collect(Collectors.toList()));
+        response.setPaginationInfo(PaginationUtil.getPaginationInfo(appeals));
+        return response;
     }
 
     @Override
-    public List<AppealResponse> getAppealsByEmail(String email) {
+    public AppealListResponse getAppealsByEmail(String email, Pageable pageable) {
 
-        List<Appeal> appeals = appealRepository.findAllByEmail(email);
-        return appeals.stream().map(AppealMapper.INSTANCE::appealToAppealResponse).collect(Collectors.toList());
+        AppealListResponse response = AppealListResponse.builder().build();
+        Page<Appeal> appeals = appealRepository.findAllByEmailContains(email, pageable);
+        response.setItems(appeals.getContent().stream().map(AppealMapper.INSTANCE::appealToAppealResponse).collect(Collectors.toList()));
+        response.setPaginationInfo(PaginationUtil.getPaginationInfo(appeals));
+        return response;
     }
 
     @Override
@@ -49,7 +61,7 @@ public class AppealServiceImpl implements AppealService {
         Optional<Appeal> appeal = appealRepository.findById(id);
 
         if(appeal.isEmpty())
-            throw new DataNotFoundException("Appeal not found by "+id+" id"); // todo Test excetion
+            throw new DataNotFoundException("Appeal not found by "+id+" id");
 
         return AppealMapper.INSTANCE.appealToAppealResponse(appeal.get());
     }

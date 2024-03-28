@@ -14,7 +14,6 @@ import java.util.Optional;
 public interface SectionRepository extends JpaRepository<Section, Long> {
     List<Section> findAllByCourse(Course course);
     List<Section> findAllByNameLike(String name);
-    Section findByCourseAndId(Course course, Long id);
 
     @Query("SELECT s FROM Section s JOIN s.course c JOIN c.creator u " +
             "WHERE s.course.id = c.id AND c.creator.email = :userEmail AND s.id = :id")

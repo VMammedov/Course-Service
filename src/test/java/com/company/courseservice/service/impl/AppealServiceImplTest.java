@@ -2,10 +2,9 @@ package com.company.courseservice.service.impl;
 
 import com.company.courseservice.domain.Appeal;
 import com.company.courseservice.exception.DataNotFoundException;
-import com.company.courseservice.exception.IllegalRequestException;
 import com.company.courseservice.repository.AppealRepository;
 import com.company.courseservice.request.Appeal.CreateAppealRequest;
-import com.company.courseservice.request.Review.UpdateReviewRequest;
+import com.company.courseservice.response.Appeal.AppealListResponse;
 import com.company.courseservice.response.Appeal.AppealResponse;
 import com.company.courseservice.services.impl.AppealServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
 import java.util.Arrays;
@@ -97,39 +99,37 @@ public class AppealServiceImplTest {
     @Test
     public void when_call_get_all_appeal_then_return_success() {
         //Arrange
-        List<Appeal> appeals = Arrays.asList(new Appeal(), new Appeal());
-        when(appealRepository.findAll()).thenReturn(appeals);
+        Page<Appeal> appeals = new PageImpl<>(Arrays.asList(new Appeal(), new Appeal()));
+        AppealListResponse expectedResponse = AppealListResponse.builder()
+                .items(Arrays.asList(new AppealResponse(), new AppealResponse()))
+                .build();
+        when(appealRepository.findAll(any(Pageable.class))).thenReturn(appeals);
+
         //Act
-        List<AppealResponse> response = appealService.getAllAppeals();
+        AppealListResponse response = appealService.getAllAppeals(Pageable.unpaged());
 
         //Assert
         assertNotNull(response);
+        assertEquals(expectedResponse.getItems().size(), response.getItems().size());
+        verify(appealRepository).findAll(any(Pageable.class));
     }
 
     @Test
     public void when_call_get_appeal_by_email_then_return_success() {
         //Arrange
-        Appeal appeal1 = new Appeal();
-        appeal1.setId(1L);
-        appeal1.setFullName("TestFullName");
-        appeal1.setEmail("test@gmail.com");
-        appeal1.setPhoneNumber("+test");
-        appeal1.setMessage("testMessage");
+        Page<Appeal> appeals = new PageImpl<>(Arrays.asList(new Appeal(), new Appeal()));
+        AppealListResponse expectedResponse = AppealListResponse.builder()
+                .items(Arrays.asList(new AppealResponse(), new AppealResponse()))
+                .build();
+        when(appealRepository.findAllByEmailContains(any(String.class), any(Pageable.class))).thenReturn(appeals);
 
-        Appeal appeal2 = new Appeal();
-        appeal2.setId(2L);
-        appeal2.setFullName("TestFullName");
-        appeal2.setEmail("test@gmail.com");
-        appeal2.setPhoneNumber("+test");
-        appeal2.setMessage("testMessage");
-        List<Appeal> appeals = Arrays.asList(appeal1, appeal2);
-
-        when(appealRepository.findAllByEmail("test@gmail.com")).thenReturn(appeals);
         //Act
-        List<AppealResponse> responses = appealService.getAppealsByEmail("test@gmail.com");
-        //Assert
-        assertNotNull(responses);
+        AppealListResponse response = appealService.getAppealsByEmail("test@gmail.com", Pageable.unpaged());
 
+        //Assert
+        assertNotNull(response);
+        assertEquals(expectedResponse.getItems().size(), response.getItems().size());
+        verify(appealRepository).findAllByEmailContains(any(String.class), any(Pageable.class));
     }
 
 }
