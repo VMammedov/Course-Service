@@ -1,4 +1,4 @@
-package com.company.courseservice.response.Appeal;
+package com.company.courseservice.response.Review;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AppealListResponse {
-    private List<AppealResponse> items;
+public class ReviewListResponse {
+    private List<ReviewResponse> items;
     private PaginationInfo paginationInfo;
 }

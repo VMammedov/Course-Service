@@ -8,15 +8,18 @@ import com.company.courseservice.repository.ReviewRepository;
 import com.company.courseservice.request.Review.CreateReviewRequest;
 import com.company.courseservice.request.Review.UpdateReviewRequest;
 import com.company.courseservice.response.Review.CreateReviewResponse;
+import com.company.courseservice.response.Review.ReviewListResponse;
 import com.company.courseservice.response.Review.ReviewResponse;
 import com.company.courseservice.response.Review.UpdateReviewResponse;
 import com.company.courseservice.services.ReviewService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import utils.AuthUtil;
+import utils.PaginationUtil;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,10 +43,13 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public List<ReviewResponse> getAllReviews() {
-        List<Review> reviews = reviewRepository.findAll();
-        return reviews.stream()
-                .map(ReviewMapper.INSTANCE::reviewToReviewResponse).collect(Collectors.toList());
+    public ReviewListResponse getAllReviews(Pageable pageable) {
+
+        ReviewListResponse response = ReviewListResponse.builder().build();
+        Page<Review> reviews = reviewRepository.findAll(pageable);
+        response.setItems(reviews.getContent().stream().map(ReviewMapper.INSTANCE::reviewToReviewResponse).collect(Collectors.toList()));
+        response.setPaginationInfo(PaginationUtil.getPaginationInfo(reviews));
+        return response;
     }
 
     @Override
@@ -54,17 +60,23 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public List<ReviewResponse> getReviewsByUserId(Long id) {
-        List<Review> reviews = reviewRepository.findAllByUserId(id);
-        return reviews.stream()
-                .map(ReviewMapper.INSTANCE::reviewToReviewResponse).collect(Collectors.toList());
+    public ReviewListResponse getReviewsByUserId(Long id, Pageable pageable) {
+
+        ReviewListResponse response = ReviewListResponse.builder().build();
+        Page<Review> reviews = reviewRepository.findAllByUserId(id, pageable);
+        response.setItems(reviews.getContent().stream().map(ReviewMapper.INSTANCE::reviewToReviewResponse).collect(Collectors.toList()));
+        response.setPaginationInfo(PaginationUtil.getPaginationInfo(reviews));
+        return response;
     }
 
     @Override
-    public List<ReviewResponse> getReviewsByCourseId(Long id) {
-        List<Review> reviews = reviewRepository.findAllByCourseId(id);
-        return reviews.stream()
-                .map(ReviewMapper.INSTANCE::reviewToReviewResponse).collect(Collectors.toList());
+    public ReviewListResponse getReviewsByCourseId(Long id, Pageable pageable) {
+
+        ReviewListResponse response = ReviewListResponse.builder().build();
+        Page<Review> reviews = reviewRepository.findAllByCourseId(id, pageable);
+        response.setItems(reviews.getContent().stream().map(ReviewMapper.INSTANCE::reviewToReviewResponse).collect(Collectors.toList()));
+        response.setPaginationInfo(PaginationUtil.getPaginationInfo(reviews));
+        return response;
     }
 
 

@@ -10,6 +10,7 @@ import com.company.courseservice.repository.SubCategoryRepository;
 import com.company.courseservice.repository.UserRepository;
 import com.company.courseservice.request.Course.CreateCourseRequest;
 import com.company.courseservice.request.Course.UpdateCourseRequest;
+import com.company.courseservice.response.Course.CourseListResponse;
 import com.company.courseservice.response.Course.CourseResponse;
 import com.company.courseservice.response.Course.CreateCourseResponse;
 import com.company.courseservice.services.impl.CourseServiceImpl;
@@ -20,9 +21,12 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import utils.AuthUtil;
 
-import java.util.List;
+import java.util.Arrays;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -102,15 +106,37 @@ public class CourseServiceImplTest {
     @Test
     public void when_call_get_all_course_then_return_success() {
         //Arrange
-        List<Course> courses = List.of(new Course(), new Course());
-        when(courseRepository.findAll()).thenReturn(courses);
+        Page<Course> courses = new PageImpl<>(Arrays.asList(new Course(), new Course()));
+        CourseListResponse expectedResponse = CourseListResponse.builder()
+                .items(Arrays.asList(new CourseResponse(), new CourseResponse()))
+                .build();
+        when(courseRepository.findAll(any(Pageable.class))).thenReturn(courses);
 
         //Act
-        List<CourseResponse> response = courseService.getAllCourse();
+        CourseListResponse response = courseService.getAllCourse(Pageable.unpaged());
 
         //Assert
         assertNotNull(response);
-        verify(courseRepository).findAll();
+        assertEquals(expectedResponse.getItems().size(), response.getItems().size());
+        verify(courseRepository).findAll(any(Pageable.class));
+    }
+
+    @Test
+    public void when_call_get_courses_by_name_then_return_success() {
+        //Arrange
+        Page<Course> courses = new PageImpl<>(Arrays.asList(new Course(), new Course()));
+        CourseListResponse expectedResponse = CourseListResponse.builder()
+                .items(Arrays.asList(new CourseResponse(), new CourseResponse()))
+                .build();
+        when(courseRepository.findAllByNameContains(any(String.class), any(Pageable.class))).thenReturn(courses);
+
+        //Act
+        CourseListResponse response = courseService.getCoursesByName("test@gmail.com", Pageable.unpaged());
+
+        //Assert
+        assertNotNull(response);
+        assertEquals(expectedResponse.getItems().size(), response.getItems().size());
+        verify(courseRepository).findAllByNameContains(any(String.class), any(Pageable.class));
     }
 
     @Test

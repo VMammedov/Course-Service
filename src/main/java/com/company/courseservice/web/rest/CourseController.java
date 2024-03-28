@@ -2,14 +2,23 @@ package com.company.courseservice.web.rest;
 
 import com.company.courseservice.request.Course.CreateCourseRequest;
 import com.company.courseservice.request.Course.UpdateCourseRequest;
+import com.company.courseservice.response.Course.CourseListResponse;
 import com.company.courseservice.response.Course.CourseResponse;
 import com.company.courseservice.response.Course.CreateCourseResponse;
 import com.company.courseservice.services.CourseService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/course")
@@ -25,17 +34,18 @@ public class CourseController {
     }
 
     @GetMapping("/getAllCourse")
-    public List<CourseResponse> getAllCourse(){
-        return courseService.getAllCourse();
+    public CourseListResponse getAllCourse(Pageable pageable){
+        return courseService.getAllCourse(pageable);
     }
 
     @GetMapping("/getCourseById/{id}")
     public CourseResponse getCourseById(@PathVariable Long id){
         return courseService.getCourseById(id);
     }
+
     @GetMapping("getCourseByName")
-    public List<CourseResponse> getCourseByName(@RequestParam(name = "name") String name){
-        return courseService.getCoursesByName(name);
+    public CourseListResponse getCourseByName(@RequestParam(name = "name") String name, Pageable pageable){
+        return courseService.getCoursesByName(name, pageable);
     }
 
     @PutMapping("/updateCourseById/{id}")

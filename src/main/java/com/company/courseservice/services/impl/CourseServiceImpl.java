@@ -11,15 +11,18 @@ import com.company.courseservice.repository.SubCategoryRepository;
 import com.company.courseservice.repository.UserRepository;
 import com.company.courseservice.request.Course.CreateCourseRequest;
 import com.company.courseservice.request.Course.UpdateCourseRequest;
+import com.company.courseservice.response.Course.CourseListResponse;
 import com.company.courseservice.response.Course.CourseResponse;
 import com.company.courseservice.response.Course.CreateCourseResponse;
 import com.company.courseservice.services.CourseService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import utils.AuthUtil;
+import utils.PaginationUtil;
 
 import java.util.Date;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,10 +57,13 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<CourseResponse> getAllCourse() {
-        //todo pagination
-        List<Course> courses= courseRepository.findAll();
-        return courses.stream().map(CourseMapper.INSTANCE::courseToCourseResponse).collect(Collectors.toList());
+    public CourseListResponse getAllCourse(Pageable pageable) {
+
+        CourseListResponse response = CourseListResponse.builder().build();
+        Page<Course> courses = courseRepository.findAll(pageable);
+        response.setItems(courses.getContent().stream().map(CourseMapper.INSTANCE::courseToCourseResponse).collect(Collectors.toList()));
+        response.setPaginationInfo(PaginationUtil.getPaginationInfo(courses));
+        return response;
     }
 
     @Override
@@ -100,16 +106,14 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<CourseResponse> getCoursesByName(String name) {
-        //todo pagination
-        List<CourseResponse> courseResponseList;
-        List<Course> courseList = courseRepository.findAllByNameLike(name);
+    public CourseListResponse getCoursesByName(String name, Pageable pageable) {
 
-        courseResponseList = courseList.stream().map(CourseMapper.INSTANCE::courseToCourseResponse).collect(Collectors.toList());
-
-        return courseResponseList;
+        CourseListResponse response = CourseListResponse.builder().build();
+        Page<Course> courses = courseRepository.findAllByNameContains(name, pageable);
+        response.setItems(courses.getContent().stream().map(CourseMapper.INSTANCE::courseToCourseResponse).collect(Collectors.toList()));
+        response.setPaginationInfo(PaginationUtil.getPaginationInfo(courses));
+        return response;
     }
-
 
     private Course findCourseById(Long id){
         return courseRepository.findById(id).orElseThrow(()->

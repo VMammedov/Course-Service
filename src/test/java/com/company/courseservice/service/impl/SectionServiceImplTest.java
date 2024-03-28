@@ -13,7 +13,11 @@ import com.company.courseservice.response.Section.SectionResponse;
 import com.company.courseservice.services.impl.SectionServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import utils.AuthUtil;
 
 import java.util.Arrays;

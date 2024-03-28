@@ -8,6 +8,7 @@ import com.company.courseservice.repository.ReviewRepository;
 import com.company.courseservice.request.Review.CreateReviewRequest;
 import com.company.courseservice.request.Review.UpdateReviewRequest;
 import com.company.courseservice.response.Review.CreateReviewResponse;
+import com.company.courseservice.response.Review.ReviewListResponse;
 import com.company.courseservice.response.Review.ReviewResponse;
 import com.company.courseservice.response.Review.UpdateReviewResponse;
 import com.company.courseservice.services.impl.ReviewServiceImpl;
@@ -18,10 +19,12 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import utils.AuthUtil;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -83,13 +86,19 @@ public class ReviewServiceImplTest {
     @Test
     public void when_call_get_all_reviews_then_return_success() {
         //Arrange
-        List<Review> reviews = Arrays.asList(new Review(), new Review());
-        when(reviewRepository.findAll()).thenReturn(reviews);
+        Page<Review> reviews = new PageImpl<>(Arrays.asList(new Review(), new Review()));
+        ReviewListResponse expectedResponse = ReviewListResponse.builder()
+                .items(Arrays.asList(new ReviewResponse(), new ReviewResponse()))
+                .build();
+        when(reviewRepository.findAll(any(Pageable.class))).thenReturn(reviews);
+
         //Act
-        List<ReviewResponse> response = reviewService.getAllReviews();
+        ReviewListResponse response = reviewService.getAllReviews(Pageable.unpaged());
 
         //Assert
         assertNotNull(response);
+        assertEquals(expectedResponse.getItems().size(), response.getItems().size());
+        verify(reviewRepository).findAll(any(Pageable.class));
     }
 
     @Test
@@ -106,49 +115,48 @@ public class ReviewServiceImplTest {
     }
 
     @Test
-    public void when_call_get_review_by_user_id_given_valid_user_id_then_return_success() {
+    public void when_call_get_reviews_by_user_id_given_valid_user_id_then_return_success() {
         // Arrange
         Long userId = 123L;
-        User user = new User();
-        user.setId(userId);
-        Review review1 = new Review();
-        review1.setUser(user);
-        Review review2 = new Review();
-        review2.setUser(user);
-        List<Review> reviews = Arrays.asList(review1, review2);
+        User user = User.builder().id(userId).build();
+        Review review1 = Review.builder().user(user).build();
+        Review review2 = Review.builder().user(user).build();
+        Page<Review> reviews = new PageImpl<>(Arrays.asList(review1, review2));
+        ReviewListResponse expectedResponse = ReviewListResponse.builder()
+                .items(Arrays.asList(new ReviewResponse(), new ReviewResponse()))
+                .build();
 
-
-        when(reviewRepository.findAllByUserId(userId)).thenReturn(reviews);
+        when(reviewRepository.findAllByUserId(any(Long.class), any(Pageable.class))).thenReturn(reviews);
         // Act
-        List<ReviewResponse> responseList = reviewService.getReviewsByUserId(userId);
+        ReviewListResponse response = reviewService.getReviewsByUserId(userId, Pageable.unpaged());
 
         // Assert
-        assertNotNull(responseList);
-        assertEquals(reviews.size(), responseList.size());
-
+        assertNotNull(response);
+        assertEquals(expectedResponse.getItems().size(), response.getItems().size());
+        verify(reviewRepository).findAllByUserId(any(Long.class), any(Pageable.class));
     }
 
     @Test
-    public void when_call_get_review_by_course_id_given_valid_course_id_then_return_success() {
+    public void when_call_get_reviews_by_course_id_given_valid_course_id_then_return_success() {
         // Arrange
         Long courseId = 123L;
-        Course course = new Course();
-        course.setId(courseId);
-        Review review1 = new Review();
-        review1.setCourse(course);
-        Review review2 = new Review();
-        review2.setCourse(course);
-        List<Review> reviews = Arrays.asList(review1, review2);
+        Course course = Course.builder().id(courseId).build();
+        Review review1 = Review.builder().course(course).build();
+        Review review2 = Review.builder().course(course).build();
+        Page<Review> reviews = new PageImpl<>(Arrays.asList(review1, review2));
+        ReviewListResponse expectedResponse = ReviewListResponse.builder()
+                .items(Arrays.asList(new ReviewResponse(), new ReviewResponse()))
+                .build();
 
-
-        when(reviewRepository.findAllByUserId(courseId)).thenReturn(reviews);
+        when(reviewRepository.findAllByCourseId(any(Long.class), any(Pageable.class))).thenReturn(reviews);
 
         // Act
-        List<ReviewResponse> responseList = reviewService.getReviewsByUserId(courseId);
+        ReviewListResponse response = reviewService.getReviewsByCourseId(courseId, Pageable.unpaged());
 
         // Assert
-        assertNotNull(responseList);
-        assertEquals(reviews.size(), responseList.size());
+        assertNotNull(response);
+        assertEquals(expectedResponse.getItems().size(), response.getItems().size());
+        verify(reviewRepository).findAllByCourseId(any(Long.class), any(Pageable.class));
     }
 
     @Test

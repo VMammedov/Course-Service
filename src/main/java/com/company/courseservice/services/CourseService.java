@@ -2,15 +2,15 @@ package com.company.courseservice.services;
 
 import com.company.courseservice.request.Course.CreateCourseRequest;
 import com.company.courseservice.request.Course.UpdateCourseRequest;
+import com.company.courseservice.response.Course.CourseListResponse;
 import com.company.courseservice.response.Course.CourseResponse;
 import com.company.courseservice.response.Course.CreateCourseResponse;
-
-import java.util.List;
+import org.springframework.data.domain.Pageable;
 
 public interface CourseService {
     CreateCourseResponse createCourse(CreateCourseRequest request);
 
-    List<CourseResponse> getAllCourse();
+    CourseListResponse getAllCourse(Pageable pageable);
 
     CourseResponse updateCourseById(Long id, UpdateCourseRequest request);
 
@@ -18,5 +18,5 @@ public interface CourseService {
 
     CourseResponse getCourseById(Long id);
 
-    List<CourseResponse> getCoursesByName(String name);
+    CourseListResponse getCoursesByName(String name, Pageable pageable);
 }
