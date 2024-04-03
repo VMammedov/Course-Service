@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateSectionRequest {
+
     private String name;
     private Long courseId;
     private Long orderNumber;

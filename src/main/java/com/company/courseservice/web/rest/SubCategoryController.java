@@ -22,19 +22,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class SubCategoryController {
     private final SubCategoryService subCategoryService;
 
-    @PostMapping("/addSubCategory")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CreateSubCategoryResponse addSubCategory(@RequestBody CreateSubCategoryRequest request){
         return subCategoryService.createSubCategory(request);
     }
 
-    @GetMapping("/getSubCategory/{id}")
+    @GetMapping("/{id}")
     public SubCategoryResponse getSubCategory(@PathVariable Long id){
         return subCategoryService.getSubCategory(id);
     }
 
-    @GetMapping("/getSubCategories/{categoryId}")
-    public SubCategoryBulkResponse getSubCategories(@PathVariable @NotNull Long categoryId){
+    @GetMapping("/getSubCategoriesByCategoryId/{categoryId}")
+    public SubCategoryBulkResponse getSubCategories(@PathVariable Long categoryId){
         return subCategoryService.getSubCategories(categoryId);
     }
 }

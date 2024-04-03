@@ -8,6 +8,9 @@ springdoc:
     path: /api-docs
 
 spring:
+  profiles:
+    active: dev
+
   output:
     ansi:
       enabled: always # Showing output understandable (colored)
@@ -27,9 +30,22 @@ spring:
     enabled: true
     change-log: classpath:/db/changelog/db.changelog-master.yaml
 
+  cache:
+    type: redis
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      repositories:
+        enabled: false
+
 logging:
   level:
     liquibase: INFO
 
 token:
   key: aXRfaXNfbXlfc2VjcmV0X2tleV9pdF9pc19teV9zZWNyZXRfa2V5X2l0X2lzX215X3NlY3JldF9rZXlfaXRfaXNfbXlfc2VjcmV0X2tleV8=
+
+cache:
+  config:
+    entryTtl: 60

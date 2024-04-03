@@ -1,5 +1,6 @@
 package com.company.courseservice.services.impl;
 
+import com.company.courseservice.constants.Constants;
 import com.company.courseservice.domain.Category;
 import com.company.courseservice.domain.SubCategory;
 import com.company.courseservice.exception.DataNotFoundException;
@@ -13,6 +14,8 @@ import com.company.courseservice.response.SubCategory.SubCategoryResponse;
 import com.company.courseservice.services.SubCategoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,6 +30,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     private final CategoryRepository categoryRepository;
 
     @Override
+    @CacheEvict(value = Constants.CacheNames.SUB_CATEGORY_NAMES, allEntries = true)
     public CreateSubCategoryResponse createSubCategory(CreateSubCategoryRequest request) {
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new DataNotFoundException("SubCategory with " + request.getCategoryId() + " id not found!"));
@@ -42,6 +46,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     }
 
     @Override
+    @Cacheable(value = Constants.CacheNames.SUB_CATEGORY_NAMES, key = "#id")
     public SubCategoryResponse getSubCategory(Long id) {
         SubCategory subCategory = subCategoryRepository.findSubCategoryById(id)
                 .orElseThrow(() -> new DataNotFoundException("SubCategory with " + id + " id not found!"));
@@ -50,7 +55,9 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     }
 
     @Override
+    @Cacheable(value = Constants.CacheNames.SUB_CATEGORY_NAMES, key = "'category_id_' + #categoryId")
     public SubCategoryBulkResponse getSubCategories(Long categoryId) {
+
         SubCategoryBulkResponse subCategoryBulkResponse = new SubCategoryBulkResponse();
         List<SubCategory> subCategories = subCategoryRepository.findSubCategoriesByCategory_Id(categoryId);
 
@@ -60,7 +67,6 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
         subCategoryBulkResponse.setCount(subCategoryBulkResponse.getSubCategories() != null ? subCategories.size() : 0);
         subCategoryBulkResponse.setCategoryId(categoryId);
-
         return subCategoryBulkResponse;
     }
 }

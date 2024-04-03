@@ -26,7 +26,7 @@ import java.util.List;
 public class AppealController {
     private final AppealService appealService;
 
-    @PostMapping("/sentAppeal")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public AppealResponse sentAppeal(@RequestBody CreateAppealRequest request){
         return appealService.sentAppeal(request);
@@ -42,7 +42,7 @@ public class AppealController {
         return appealService.getAppealsByEmail(email, pageable);
     }
 
-    @GetMapping("/getAppeal/{id}")
+    @GetMapping("/{id}")
     public AppealResponse getAppeal(@PathVariable Long id){
         return appealService.getAppeal(id);
     }

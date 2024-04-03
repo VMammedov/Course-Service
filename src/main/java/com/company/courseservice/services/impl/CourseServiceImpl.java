@@ -1,5 +1,6 @@
 package com.company.courseservice.services.impl;
 
+import com.company.courseservice.constants.Constants;
 import com.company.courseservice.domain.Course;
 import com.company.courseservice.domain.SubCategory;
 import com.company.courseservice.domain.User;
@@ -16,6 +17,8 @@ import com.company.courseservice.response.Course.CourseResponse;
 import com.company.courseservice.response.Course.CreateCourseResponse;
 import com.company.courseservice.services.CourseService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -57,7 +60,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public CourseListResponse getAllCourse(Pageable pageable) {
+    public CourseListResponse getAllCourses(Pageable pageable) {
 
         CourseListResponse response = CourseListResponse.builder().build();
         Page<Course> courses = courseRepository.findAll(pageable);
@@ -67,6 +70,24 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @Cacheable(value = Constants.CacheNames.COURSE, key = "#id")
+    public CourseResponse getCourseById(Long id) {
+        Course course = findCourseById(id);
+        return CourseMapper.INSTANCE.courseToCourseResponse(course);
+    }
+
+    @Override
+    public CourseListResponse getCoursesByName(String name, Pageable pageable) {
+
+        CourseListResponse response = CourseListResponse.builder().build();
+        Page<Course> courses = courseRepository.findAllByNameContains(name, pageable);
+        response.setItems(courses.getContent().stream().map(CourseMapper.INSTANCE::courseToCourseResponse).collect(Collectors.toList()));
+        response.setPaginationInfo(PaginationUtil.getPaginationInfo(courses));
+        return response;
+    }
+
+    @Override
+    @CacheEvict(value = Constants.CacheNames.COURSE, key = "#id")
     public CourseResponse updateCourseById(Long id, UpdateCourseRequest request) {
 
         String currentUserEmail = AuthUtil.getCurrentUserEmail();
@@ -87,6 +108,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @CacheEvict(value = Constants.CacheNames.COURSE, key = "#id")
     public void deleteCourseById(Long id) {
         String currentUserEmail = AuthUtil.getCurrentUserEmail();
         Course course = courseRepository.findCourseByIdAndCreatorEmail(id, currentUserEmail)
@@ -97,22 +119,6 @@ public class CourseServiceImpl implements CourseService {
 
         course.setEnabled(false);
         courseRepository.save(course);
-    }
-
-    @Override
-    public CourseResponse getCourseById(Long id) {
-        Course course = findCourseById(id);
-        return CourseMapper.INSTANCE.courseToCourseResponse(course);
-    }
-
-    @Override
-    public CourseListResponse getCoursesByName(String name, Pageable pageable) {
-
-        CourseListResponse response = CourseListResponse.builder().build();
-        Page<Course> courses = courseRepository.findAllByNameContains(name, pageable);
-        response.setItems(courses.getContent().stream().map(CourseMapper.INSTANCE::courseToCourseResponse).collect(Collectors.toList()));
-        response.setPaginationInfo(PaginationUtil.getPaginationInfo(courses));
-        return response;
     }
 
     private Course findCourseById(Long id){

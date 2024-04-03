@@ -17,5 +17,4 @@ public interface AppealMapper {
     Appeal createAppealRequestToAppeal(CreateAppealRequest request);
 
     AppealResponse appealToAppealResponse(Appeal appeal);
-
 }
