@@ -34,7 +34,7 @@ public class LectureController {
         return lectureService.createLecture(request);
     }
 
-    @PostMapping("createBulkLecture")
+    @PostMapping("/createBulkLecture")
     @ResponseStatus(HttpStatus.CREATED)
     public CreateBulkLectureResponse createBulkLecture(@RequestBody CreateBulkLectureRequest request) {
         return lectureService.createBulkLecture(request);

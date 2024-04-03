@@ -16,6 +16,16 @@ import java.util.Date;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<?> runtimeExceptionHandling(RuntimeException exception, WebRequest request) {
+        return new ResponseEntity<>(
+                new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                        new Date(),
+                        exception.getMessage(),
+                        request.getDescription(false))
+                ,HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     @ExceptionHandler(DataNotFoundException.class)
     public ResponseEntity<?> dataNotFoundExceptionHandling(DataNotFoundException exception, WebRequest request) {
         return new ResponseEntity<>(

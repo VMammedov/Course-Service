@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 public interface CourseService {
     CreateCourseResponse createCourse(CreateCourseRequest request);
 
-    CourseListResponse getAllCourse(Pageable pageable);
+    CourseListResponse getAllCourses(Pageable pageable);
 
     CourseResponse updateCourseById(Long id, UpdateCourseRequest request);
 

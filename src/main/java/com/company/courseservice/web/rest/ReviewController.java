@@ -26,39 +26,39 @@ import org.springframework.web.bind.annotation.RestController;
 public class ReviewController {
     private final ReviewService service;
 
-    @PostMapping("/createReview")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CreateReviewResponse createReview(@RequestBody CreateReviewRequest request){
+    public CreateReviewResponse createReview(@RequestBody CreateReviewRequest request) {
         return service.createReview(request);
     }
 
-    @GetMapping("/getAllReviews")
-    public ReviewListResponse getAllReviews(Pageable pageable){
+    @GetMapping
+    public ReviewListResponse getAllReviews(Pageable pageable) {
         return service.getAllReviews(pageable);
     }
 
-    @GetMapping("/getReviewById/{id}")
-    public ReviewResponse getReviewById(@PathVariable("id") Long id){
+    @GetMapping("/{id}")
+    public ReviewResponse getReviewById(@PathVariable("id") Long id) {
         return service.getReviewById(id);
     }
 
     @GetMapping("/getReviewsByUserId/{userId}")
-    public ReviewListResponse getReviewsByUserId(@PathVariable("userId") Long id, Pageable pageable){
+    public ReviewListResponse getReviewsByUserId(@PathVariable("userId") Long id, Pageable pageable) {
         return service.getReviewsByUserId(id, pageable);
     }
 
     @GetMapping("/getReviewsByCourseId/{courseId}")
-    public ReviewListResponse getReviewsByCourseId(@PathVariable("courseId") Long id, Pageable pageable){
+    public ReviewListResponse getReviewsByCourseId(@PathVariable("courseId") Long id, Pageable pageable) {
         return service.getReviewsByCourseId(id, pageable);
     }
 
-    @PutMapping("/updateReviewById/{id}")
-    public UpdateReviewResponse updateReviewById(@PathVariable("id") Long id, @RequestBody UpdateReviewRequest request){
+    @PutMapping("/{id}")
+    public UpdateReviewResponse updateReviewById(@PathVariable("id") Long id, @RequestBody UpdateReviewRequest request) {
         return service.updateReviewById(id,request);
     }
 
-    @DeleteMapping("/deleteReviewById/{id}")
-    public void deleteReviewById(@PathVariable("id") Long id){
+    @DeleteMapping("/{id}")
+    public void deleteReviewById(@PathVariable("id") Long id) {
         service.deleteReviewById(id);
     }
 }

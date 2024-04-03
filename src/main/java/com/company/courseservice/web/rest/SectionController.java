@@ -26,18 +26,18 @@ import java.util.List;
 public class SectionController {
     private final SectionService service;
 
-    @PostMapping("/createSection")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CreatedSectionResponse createSection(@RequestBody CreateSectionRequest request){
         return service.createSection(request);
     }
 
-    @GetMapping("/getAllSectionByCourseId/{courseId}")
-    public List<CreatedSectionResponse> getAllSectionByCourseId(@PathVariable("courseId") Long courseId){
+    @GetMapping("/getAllSectionsByCourseId/{courseId}")
+    public List<CreatedSectionResponse> getAllSectionsByCourseId(@PathVariable("courseId") Long courseId){
         return service.getAllSectionByCourseId(courseId);
     }
 
-    @GetMapping("getSectionById/{id}")
+    @GetMapping("/getSectionById/{id}")
     public CreatedSectionResponse getSectionById(@PathVariable("id") Long id){
         return service.getSectionById(id);
     }
@@ -47,12 +47,12 @@ public class SectionController {
         return service.getSectionByName(name);
     }
 
-    @PutMapping("/updateSectionByCourseId/{id}")
-    public SectionResponse updateSectionByCourseId(@PathVariable("id") Long id, @RequestBody UpdateSectionRequest request){
+    @PutMapping("/{id}")
+    public SectionResponse updateSectionById(@PathVariable("id") Long id, @RequestBody UpdateSectionRequest request){
         return service.updateSectionById(id,request);
     }
 
-    @DeleteMapping("deleteSectionById/{id}")
+    @DeleteMapping("/{id}")
     public void deleteSectionById(@PathVariable("id") Long id){
          service.deleteSectionById(id);
     }

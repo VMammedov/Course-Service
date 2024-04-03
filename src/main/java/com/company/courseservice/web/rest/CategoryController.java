@@ -24,18 +24,18 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
-    @PostMapping("/addCategory")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CreateCategoryResponse addCategory(@RequestBody CreateCategoryRequest request){
         return categoryService.createCategory(request);
     }
 
-    @GetMapping("/getCategory/{id}")
+    @GetMapping("/{id}")
     public CategoryResponse getCategory(@PathVariable Long id){
         return categoryService.getCategory(id);
     }
 
-    @GetMapping("/getCategories")
+    @GetMapping
     public List<CategoryResponse> getCategories(){
         return categoryService.getCategories();
     }

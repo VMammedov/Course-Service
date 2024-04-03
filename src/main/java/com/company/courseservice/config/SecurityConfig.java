@@ -2,6 +2,7 @@ package com.company.courseservice.config;
 
 import com.company.courseservice.filters.JwtAuthFilter;
 import com.company.courseservice.services.UserService;
+import jakarta.servlet.DispatcherType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,19 +27,20 @@ public class SecurityConfig {
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final JwtAuthFilter jwtAuthenticationFilter;
     private final UserService userService;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http.exceptionHandling(configurer -> configurer.authenticationEntryPoint(authenticationEntryPoint));
-
         http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(request -> request.requestMatchers("/auth/**")
-                        .permitAll()
+                .authorizeHttpRequests(request -> request
+                        .dispatcherTypeMatchers(DispatcherType.ERROR).authenticated()
+                        .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/swagger-ui/**","/api-docs/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider()).addFilterBefore(
-                        jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                        jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(configurer -> configurer.authenticationEntryPoint(authenticationEntryPoint));
         return http.build();
     }
 

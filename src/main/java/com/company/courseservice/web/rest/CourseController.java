@@ -27,34 +27,34 @@ public class CourseController {
 
     private final CourseService courseService;
 
-    @PostMapping("/createCourse")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CreateCourseResponse createCourse(@RequestBody CreateCourseRequest request){
         return courseService.createCourse(request);
     }
 
-    @GetMapping("/getAllCourse")
-    public CourseListResponse getAllCourse(Pageable pageable){
-        return courseService.getAllCourse(pageable);
+    @GetMapping
+    public CourseListResponse getAllCourses(Pageable pageable){
+        return courseService.getAllCourses(pageable);
     }
 
-    @GetMapping("/getCourseById/{id}")
+    @GetMapping("/{id}")
     public CourseResponse getCourseById(@PathVariable Long id){
         return courseService.getCourseById(id);
     }
 
-    @GetMapping("getCourseByName")
+    @GetMapping("/getCourseByName")
     public CourseListResponse getCourseByName(@RequestParam(name = "name") String name, Pageable pageable){
         return courseService.getCoursesByName(name, pageable);
     }
 
-    @PutMapping("/updateCourseById/{id}")
+    @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public CourseResponse updateCourseById(@PathVariable("id") Long id, @RequestBody UpdateCourseRequest request){
         return courseService.updateCourseById(id,request);
     }
 
-    @DeleteMapping("/deleteCourseById/{id}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void deleteCourseById(@PathVariable("id") Long id){
         courseService.deleteCourseById(id);

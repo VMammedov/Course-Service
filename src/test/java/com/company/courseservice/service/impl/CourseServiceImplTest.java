@@ -113,7 +113,7 @@ public class CourseServiceImplTest {
         when(courseRepository.findAll(any(Pageable.class))).thenReturn(courses);
 
         //Act
-        CourseListResponse response = courseService.getAllCourse(Pageable.unpaged());
+        CourseListResponse response = courseService.getAllCourses(Pageable.unpaged());
 
         //Assert
         assertNotNull(response);
