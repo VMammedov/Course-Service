@@ -1,5 +1,6 @@
 package com.company.courseservice.services.impl;
 
+import com.company.courseservice.constants.Constants;
 import com.company.courseservice.domain.Course;
 import com.company.courseservice.domain.Section;
 import com.company.courseservice.exception.DataNotFoundException;
@@ -13,6 +14,9 @@ import com.company.courseservice.response.Section.CreatedSectionResponse;
 import com.company.courseservice.response.Section.SectionResponse;
 import com.company.courseservice.services.SectionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import utils.AuthUtil;
 
@@ -26,6 +30,9 @@ public class SectionServiceImpl implements SectionService {
     private final CourseRepository courseRepository;
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = Constants.CacheNames.SECTION, allEntries = true)
+    })
     public CreatedSectionResponse createSection(CreateSectionRequest request) {
         Long courseId = request.getCourseId();
         String userEmail = AuthUtil.getCurrentUserEmail();
@@ -41,6 +48,7 @@ public class SectionServiceImpl implements SectionService {
     }
 
     @Override
+    @Cacheable(value = Constants.CacheNames.SECTION, key = "#courseId")
     public List<CreatedSectionResponse> getAllSectionByCourseId(Long courseId) {
         Course course = courseRepository.findById(courseId).orElseThrow(()->
                 new DataNotFoundException("Course not found by "+courseId+" id"));
@@ -50,6 +58,7 @@ public class SectionServiceImpl implements SectionService {
     }
 
     @Override
+    @Cacheable(value = Constants.CacheNames.SECTION, key = "#name")
     public List<SectionResponse> getSectionByName(String name) {
         List<SectionResponse> sectionResponseList;
         List<Section> sectionList = sectionRepository.findAllByNameLike(name);
@@ -59,6 +68,7 @@ public class SectionServiceImpl implements SectionService {
     }
 
     @Override
+    @CacheEvict(value = Constants.CacheNames.SECTION, key = "#id")
     public SectionResponse updateSectionById(Long id, UpdateSectionRequest request) {
         String userEmail = AuthUtil.getCurrentUserEmail();
 
@@ -71,6 +81,7 @@ public class SectionServiceImpl implements SectionService {
     }
 
     @Override
+    @Cacheable(value = Constants.CacheNames.SECTION, key = "#id")
     public CreatedSectionResponse getSectionById(Long id) {
         Section section = sectionRepository.findById(id).orElseThrow(()->
                 new DataNotFoundException("Section not found by "+id+" id"));
@@ -78,6 +89,7 @@ public class SectionServiceImpl implements SectionService {
     }
 
     @Override
+    @CacheEvict(value = Constants.CacheNames.SECTION, key = "#id")
     public void deleteSectionById(Long id) {
         String userEmail = AuthUtil.getCurrentUserEmail();
 

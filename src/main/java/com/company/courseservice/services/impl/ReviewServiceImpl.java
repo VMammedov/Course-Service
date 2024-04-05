@@ -1,5 +1,6 @@
 package com.company.courseservice.services.impl;
 
+import com.company.courseservice.constants.Constants;
 import com.company.courseservice.domain.Review;
 import com.company.courseservice.exception.DataNotFoundException;
 import com.company.courseservice.exception.IllegalRequestException;
@@ -13,6 +14,9 @@ import com.company.courseservice.response.Review.ReviewResponse;
 import com.company.courseservice.response.Review.UpdateReviewResponse;
 import com.company.courseservice.services.ReviewService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,6 +33,10 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = Constants.CacheNames.REVIEW, allEntries = true)
+    }
+    )
     public CreateReviewResponse createReview(CreateReviewRequest request) {
         boolean usedReviewForThisCourseAndUser =
                 reviewRepository.existsReviewByCourseIdAndUserId(request.getCourseId(), request.getUserId());
@@ -43,6 +51,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    @Cacheable(value = Constants.CacheNames.REVIEW, key = "'reviews_'+ T(java.time.LocalDateTime).now()")
     public ReviewListResponse getAllReviews(Pageable pageable) {
 
         ReviewListResponse response = ReviewListResponse.builder().build();
@@ -53,6 +62,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    @Cacheable(value = Constants.CacheNames.REVIEW, key = "#id")
     public ReviewResponse getReviewById(Long id) {
         Review review = reviewRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("Review not found by " + id + " id"));
@@ -60,6 +70,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    @Cacheable(value = Constants.CacheNames.REVIEW, key = "#id")
     public ReviewListResponse getReviewsByUserId(Long id, Pageable pageable) {
 
         ReviewListResponse response = ReviewListResponse.builder().build();
@@ -70,6 +81,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    @Cacheable(value = Constants.CacheNames.REVIEW, key = "#id")
     public ReviewListResponse getReviewsByCourseId(Long id, Pageable pageable) {
 
         ReviewListResponse response = ReviewListResponse.builder().build();
@@ -82,6 +94,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional
+    @CacheEvict(value = Constants.CacheNames.REVIEW, key = "#id")
     public UpdateReviewResponse updateReviewById(Long id, UpdateReviewRequest request) {
         String userEmail = AuthUtil.getCurrentUserEmail();
 
@@ -95,6 +108,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional
+    @CacheEvict(value = Constants.CacheNames.REVIEW, key = "#id")
     public void deleteReviewById(Long id) {
         String userEmail = AuthUtil.getCurrentUserEmail();
 
