@@ -58,7 +58,6 @@ public class SectionServiceImpl implements SectionService {
     }
 
     @Override
-    @Cacheable(value = Constants.CacheNames.SECTION, key = "#name")
     public List<SectionResponse> getSectionByName(String name) {
         List<SectionResponse> sectionResponseList;
         List<Section> sectionList = sectionRepository.findAllByNameLike(name);
@@ -81,7 +80,6 @@ public class SectionServiceImpl implements SectionService {
     }
 
     @Override
-    @Cacheable(value = Constants.CacheNames.SECTION, key = "#id")
     public CreatedSectionResponse getSectionById(Long id) {
         Section section = sectionRepository.findById(id).orElseThrow(()->
                 new DataNotFoundException("Section not found by "+id+" id"));

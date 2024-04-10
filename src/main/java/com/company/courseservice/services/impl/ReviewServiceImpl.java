@@ -51,7 +51,6 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    @Cacheable(value = Constants.CacheNames.REVIEW, key = "'reviews_'+ T(java.time.LocalDateTime).now()")
     public ReviewListResponse getAllReviews(Pageable pageable) {
 
         ReviewListResponse response = ReviewListResponse.builder().build();
