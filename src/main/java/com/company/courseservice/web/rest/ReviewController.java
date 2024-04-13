@@ -7,9 +7,11 @@ import com.company.courseservice.response.Review.ReviewListResponse;
 import com.company.courseservice.response.Review.ReviewResponse;
 import com.company.courseservice.response.Review.UpdateReviewResponse;
 import com.company.courseservice.services.ReviewService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+@Validated
 @RestController
 @RequestMapping("/review")
 @RequiredArgsConstructor
@@ -28,7 +31,7 @@ public class ReviewController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CreateReviewResponse createReview(@RequestBody CreateReviewRequest request) {
+    public CreateReviewResponse createReview(@RequestBody @Valid CreateReviewRequest request) {
         return service.createReview(request);
     }
 
@@ -38,7 +41,7 @@ public class ReviewController {
     }
 
     @GetMapping("/{id}")
-    public ReviewResponse getReviewById(@PathVariable("id") Long id) {
+    public ReviewResponse getReviewById(@PathVariable("id") Long id) { // todo check working properly or not
         return service.getReviewById(id);
     }
 
@@ -53,7 +56,7 @@ public class ReviewController {
     }
 
     @PutMapping("/{id}")
-    public UpdateReviewResponse updateReviewById(@PathVariable("id") Long id, @RequestBody UpdateReviewRequest request) {
+    public UpdateReviewResponse updateReviewById(@PathVariable("id") Long id, @RequestBody @Valid UpdateReviewRequest request) {
         return service.updateReviewById(id,request);
     }
 

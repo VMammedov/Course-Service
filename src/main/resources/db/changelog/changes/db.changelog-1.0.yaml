@@ -50,6 +50,19 @@ databaseChangeLog:
                   name: created_date
                   type: DATETIME
          - createTable:
+             tableName: roles
+             columns:
+               - column:
+                   name: id
+                   type: BIGINT
+                   autoIncrement: true
+                   constraints:
+                     primaryKey: true
+                     nullable: false
+               - column:
+                   name: name
+                   type: TEXT
+         - createTable:
             tableName: authorities
             columns:
               - column:
@@ -63,14 +76,31 @@ databaseChangeLog:
                   name: authority
                   type: TEXT
          - createTable:
-            tableName: users_authorities
-            columns:
-              - column:
-                  name: user_id
-                  type: BIGINT
-              - column:
-                  name: authority_id
-                  type: BIGINT
+             tableName: users_roles
+             columns:
+               - column:
+                   name: user_id
+                   type: BIGINT
+                   constraints:
+                     nullable: false
+               - column:
+                   name: role_id
+                   type: BIGINT
+                   constraints:
+                     nullable: false
+         - createTable:
+             tableName: roles_authorities
+             columns:
+               - column:
+                   name: role_id
+                   type: BIGINT
+                   constraints:
+                     nullable: false
+               - column:
+                   name: authority_id
+                   type: BIGINT
+                   constraints:
+                     nullable: false
   - changeSet:
       id: 2
       author: vusalm
@@ -281,3 +311,13 @@ databaseChangeLog:
             oldColumnName: order
             newColumnName: order_number
             columnDataType: INTEGER
+
+  - changeSet:
+      id: 8
+      author: vusalm
+      changes:
+        - renameColumn:
+            tableName: authorities
+            oldColumnName: authority
+            newColumnName: name
+            columnDataType: TEXT

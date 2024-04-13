@@ -6,9 +6,12 @@ import com.company.courseservice.response.Course.CourseListResponse;
 import com.company.courseservice.response.Course.CourseResponse;
 import com.company.courseservice.response.Course.CreateCourseResponse;
 import com.company.courseservice.services.CourseService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+@Validated
 @RestController
 @RequestMapping("/course")
 @RequiredArgsConstructor
@@ -29,7 +33,7 @@ public class CourseController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CreateCourseResponse createCourse(@RequestBody CreateCourseRequest request){
+    public CreateCourseResponse createCourse(@RequestBody @Valid CreateCourseRequest request){
         return courseService.createCourse(request);
     }
 
@@ -50,7 +54,7 @@ public class CourseController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public CourseResponse updateCourseById(@PathVariable("id") Long id, @RequestBody UpdateCourseRequest request){
+    public CourseResponse updateCourseById(@PathVariable("id") @Valid Long id, @RequestBody UpdateCourseRequest request){
         return courseService.updateCourseById(id,request);
     }
 

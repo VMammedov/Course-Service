@@ -1,8 +1,10 @@
 package com.company.courseservice.services.impl;
 
+import com.company.courseservice.constants.Constants;
 import com.company.courseservice.domain.User;
-import com.company.courseservice.repository.UserAuthorityRepository;
+import com.company.courseservice.exception.DataNotFoundException;
 import com.company.courseservice.repository.UserRepository;
+import com.company.courseservice.repository.UserRoleRepository;
 import com.company.courseservice.request.Auth.SignUpRequest;
 import com.company.courseservice.request.Auth.SignInRequest;
 import com.company.courseservice.response.Auth.AuthResponse;
@@ -24,7 +26,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
-    private final UserAuthorityRepository userAuthorityRepository;
+    private final UserRoleRepository userRoleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
@@ -40,7 +42,8 @@ public class AuthServiceImpl implements AuthService {
                 .enabled(true).accountNonLocked(true)
                 .accountNonExpired(true).credentialsNonExpired(true)
                 .password(passwordEncoder.encode(request.getPassword()))
-                .authorities(Set.of(userAuthorityRepository.findByAuthority("USER").orElseThrow(()->new RuntimeException("Authority Not found!")))).build();
+                .roles(Set.of(userRoleRepository.findByName(Constants.Roles.ROLE_USER)
+                        .orElseThrow(() -> new DataNotFoundException("User role not found!")))).build();
         userRepository.save(user);
         var jwt = jwtService.generateToken(user);
         return AuthResponse.builder().token(jwt).build();

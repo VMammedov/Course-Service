@@ -18,11 +18,15 @@ import java.util.Date;
 @Getter
 @Setter
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "appeals")
 @EqualsAndHashCode
 public class Appeal {
+
+    public Appeal() {
+        this.sentDate = new Date();
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
