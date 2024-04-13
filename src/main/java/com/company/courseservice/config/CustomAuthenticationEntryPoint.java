@@ -12,7 +12,9 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 
 @Slf4j
 @Component
@@ -32,7 +34,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         objectMapper.writeValue(response.getWriter(),
                 new ErrorResponse(HttpStatus.UNAUTHORIZED.value(),
                 new Date(),
-                authException.getMessage(),
+                new HashSet<>(Collections.singletonList(authException.getMessage())),
                 "-"));
     }
 }

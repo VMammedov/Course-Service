@@ -5,8 +5,10 @@ import com.company.courseservice.request.Section.UpdateSectionRequest;
 import com.company.courseservice.response.Section.CreatedSectionResponse;
 import com.company.courseservice.response.Section.SectionResponse;
 import com.company.courseservice.services.SectionService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@Validated
 @RestController
 @RequestMapping("/section")
 @RequiredArgsConstructor
@@ -28,7 +31,7 @@ public class SectionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CreatedSectionResponse createSection(@RequestBody CreateSectionRequest request){
+    public CreatedSectionResponse createSection(@RequestBody @Valid CreateSectionRequest request){
         return service.createSection(request);
     }
 
@@ -48,7 +51,7 @@ public class SectionController {
     }
 
     @PutMapping("/{id}")
-    public SectionResponse updateSectionById(@PathVariable("id") Long id, @RequestBody UpdateSectionRequest request){
+    public SectionResponse updateSectionById(@PathVariable("id") Long id, @RequestBody @Valid UpdateSectionRequest request){
         return service.updateSectionById(id,request);
     }
 

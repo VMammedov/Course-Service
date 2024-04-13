@@ -1,5 +1,6 @@
 package com.company.courseservice.services.impl;
 
+import com.company.courseservice.domain.UserAuthority;
 import com.company.courseservice.services.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -10,12 +11,14 @@ import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-
+import org.springframework.security.core.GrantedAuthority;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -46,6 +49,11 @@ public class JwtServiceImpl implements JwtService {
     }
 
     private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+        Set<String> roles = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toSet());
+        extraClaims.put("roles", roles);
+
         return Jwts.builder().setClaims(extraClaims).setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))

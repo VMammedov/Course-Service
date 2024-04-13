@@ -15,8 +15,6 @@ import java.util.List;
 public class CategoryDto {
 
     private String name;
-
     private Integer count;
-
     private List<SubCategory> subCategories;
 }

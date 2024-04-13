@@ -32,8 +32,8 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")
-@ToString(exclude = "authorities")
-@EqualsAndHashCode(exclude = {"id","accountNonExpired","accountNonLocked","credentialsNonExpired","enabled","authorities"})
+@ToString(exclude = "roles")
+@EqualsAndHashCode(exclude = {"id","accountNonExpired","accountNonLocked","credentialsNonExpired","enabled","roles"})
 public class User implements UserDetails {
 
     @Id
@@ -53,10 +53,10 @@ public class User implements UserDetails {
 
     @ManyToMany(cascade = CascadeType.REFRESH)
     @JoinTable(
-            name = "users_authorities",
+            name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "authority_id"))
-    private Set<UserAuthority> authorities;
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<UserRole> roles;
 
     @Override
     public String getUsername()
@@ -66,8 +66,6 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities.stream()
-                .map(authority -> new SimpleGrantedAuthority(authority.getAuthority()))
-                .collect(Collectors.toList());
+        return roles;
     }
 }
