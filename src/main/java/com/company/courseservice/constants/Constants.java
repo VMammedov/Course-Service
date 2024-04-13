@@ -12,6 +12,10 @@ public class Constants {
         public static final String CATEGORY_NAMES_WITH_SUB = "categoryNamesWithSubCategories";
         public static final String SUB_CATEGORY_NAMES = "subCategoryNames";
         public static final String COURSE = "course";
+
+        public static final String REVIEW = "review";
+
+        public static final String SECTION = "section";
     }
 
 }
