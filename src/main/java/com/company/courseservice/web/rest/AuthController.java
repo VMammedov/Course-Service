@@ -1,5 +1,6 @@
 package com.company.courseservice.web.rest;
 
+import com.company.courseservice.request.Auth.RefreshTokenRequest;
 import com.company.courseservice.request.Auth.SignUpRequest;
 import com.company.courseservice.request.Auth.SignInRequest;
 import com.company.courseservice.response.Auth.AuthResponse;
@@ -28,5 +29,10 @@ public class AuthController {
     @PostMapping("/signIn")
     public AuthResponse signIn(@RequestBody @Valid SignInRequest signInRequest) {
         return authService.signIn(signInRequest);
+    }
+
+    @PostMapping("/refreshToken")
+    public AuthResponse refreshToken(@RequestBody RefreshTokenRequest request){
+        return authService.refreshToken(request);
     }
 }

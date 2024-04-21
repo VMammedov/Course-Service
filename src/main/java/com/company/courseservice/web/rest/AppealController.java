@@ -1,5 +1,6 @@
 package com.company.courseservice.web.rest;
 
+import com.company.courseservice.constants.Constants;
 import com.company.courseservice.request.Appeal.CreateAppealRequest;
 import com.company.courseservice.response.Appeal.AppealListResponse;
 import com.company.courseservice.response.Appeal.AppealResponse;
@@ -8,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,16 +37,19 @@ public class AppealController {
     }
 
     @GetMapping
+    @Secured(Constants.Roles.ROLE_ADMIN)
     public AppealListResponse getAllAppeals(Pageable pageable) {
         return appealService.getAllAppeals(pageable);
     }
 
     @GetMapping("/getAppealsByEmail")
+    @Secured(Constants.Roles.ROLE_ADMIN)
     public AppealListResponse getAppealByEmail(@RequestParam(name = "email") String email, Pageable pageable){
         return appealService.getAppealsByEmail(email, pageable);
     }
 
     @GetMapping("/{id}")
+    @Secured(Constants.Roles.ROLE_ADMIN)
     public AppealResponse getAppeal(@PathVariable Long id){
         return appealService.getAppeal(id);
     }

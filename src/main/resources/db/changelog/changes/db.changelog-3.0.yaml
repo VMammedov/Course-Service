@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      id: 3
+      author: omarb
+      changes:
+        - createTable:
+            tableName: refresh_token
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: token
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: expiryDate
+                  type: DATETIME
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user
+                  type: VARCHAR(255)
+                  constraints:
+                    foreignKeyName: fk_refresh_token_user
+                    references: user(id)
